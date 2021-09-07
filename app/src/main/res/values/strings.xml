@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">TrackerApp</string>
+    <string name="login_title">Tracker App\nLogin</string>
+    <string name="customer">Customer</string>
+    <string name="service_provider">Service Provider</string>
+    <string name="alert">Alert</string>
+    <string name="permissions_required">Permissions Required</string>
+    <string name="on_location">Please turn on your location.</string>
+    <string name="wait_location">Please wait while getting location…</string>
+    <string name="no_location">Unable to get location</string>
+</resources>
