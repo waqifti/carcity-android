@@ -1,6 +1,5 @@
 package com.nb.trackerapp.network
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -11,17 +10,23 @@ import java.util.*
 
 class AlarmSettings {
     companion object{
-        @SuppressLint("ShortAlarm")
         fun setAlarm(context: Context){
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent(context,AlarmReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(context,1,intent,PendingIntent.FLAG_UPDATE_CURRENT)
 
             val calendar = Calendar.getInstance()
-            calendar.add(Calendar.SECOND,2)
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),2000,
+            calendar.add(Calendar.SECOND,1)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),calendar.timeInMillis,
                 pendingIntent)
             Log.d("response","alarm set at ${DateTime.getCurrentDateTime()}")
+        }
+
+        fun stopAlarm(context: Context){
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(context,AlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context,1,intent,PendingIntent.FLAG_UPDATE_CURRENT)
+            alarmManager.cancel(pendingIntent)
         }
     }
 }

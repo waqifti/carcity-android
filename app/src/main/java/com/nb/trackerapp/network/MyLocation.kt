@@ -27,17 +27,19 @@ class MyLocation(private val activity: Activity) {
         return activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
 
-    fun updateLocation(location:Location?){
-        AppSession.getCurrentUser(activity)?.let { user ->
-            location?.let {
-                val params = HashMap<String,Any>()
-                params["lati"] = it.latitude
-                params["longi"] = it.longitude
-                params["sessiontoken"] = user.token
-                params["time"] = DateTime.getCurrentDateTime()
+    companion object{
+        fun updateLocation(context: Context,location:Location?){
+            AppSession.getCurrentUser(context)?.let { user ->
+                location?.let {
+                    val params = HashMap<String,Any>()
+                    params["lati"] = it.latitude
+                    params["longi"] = it.longitude
+                    params["sessiontoken"] = user.token
+                    params["time"] = DateTime.getCurrentDateTime()
 
-                NetworkCall.enqueueCall(activity,ApiUrl.getUpdateLocationUrl(user.type),ApiConstants.RESPONSE_TYPE_PARAMS,
-                    ApiConstants.UPDATE_LOCATION,params,null,false)
+                    NetworkCall.enqueueCall(context,ApiUrl.getUpdateLocationUrl(user.type),ApiConstants.RESPONSE_TYPE_PARAMS,
+                        ApiConstants.UPDATE_LOCATION,params,null,false)
+                }
             }
         }
     }

@@ -13,7 +13,8 @@ class Dialog {
     companion object{
         var progressDialog:AlertDialog? = null
 
-        fun showProgress(activity: Activity,message: String = "Loading...") {
+        fun showProgress(context: Context,message: String = "Loading...") {
+            val activity = context as Activity
             activity.runOnUiThread {
                 val inflater =
                     activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -29,8 +30,9 @@ class Dialog {
             }
         }
 
-        fun showMessage(activity: Activity,message:String,title:String = "Alert",dialogTag:String? = null,
+        fun showMessage(context: Context,message:String,title:String = "Alert",dialogTag:String? = null,
                        dialogResponseListener: OnDialogClickListener? = null){
+            val activity = context as Activity
             activity.runOnUiThread {
                 val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val builder = AlertDialog.Builder(activity)

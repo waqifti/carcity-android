@@ -1,6 +1,7 @@
 package com.nb.trackerapp.network
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import com.nb.trackerapp.R
 import com.nb.trackerapp.common.JSONParser
@@ -14,18 +15,18 @@ import java.util.concurrent.TimeUnit
 
 class NetworkCall {
     companion object{
-        fun enqueueCall(activity: Activity, url: String, responseType:String, responseTag:String,
+        fun enqueueCall(context: Context, url: String, responseType:String, responseTag:String,
                         params: HashMap<String,Any>,apiResponseListener: OnApiResponseListener? = null,
                         isProgress:Boolean = true,dialogClickListener: OnDialogClickListener? = null){
-            val request = getRequest(activity,responseType,url,params)
-            sendNetworkCall(activity,responseTag, request, apiResponseListener, isProgress, dialogClickListener)
+            val request = getRequest(responseType,url,params)
+            sendNetworkCall(context,responseTag, request, apiResponseListener, isProgress, dialogClickListener)
         }
 
-        private fun sendNetworkCall(activity: Activity, responseTag:String,request: Request,
+        private fun sendNetworkCall(context: Context, responseTag:String,request: Request,
                                     apiResponseListener: OnApiResponseListener?,isProgress:Boolean,
                                     dialogClickListener: OnDialogClickListener?){
-            if(Connectivity.isOnline(activity)){
-                if(isProgress){ Dialog.showProgress(activity) }
+            if(Connectivity.isOnline(context)){
+                if(isProgress){ Dialog.showProgress(context) }
 
                 val client = OkHttpClient.Builder()
                     .connectTimeout(50, TimeUnit.SECONDS)
@@ -38,7 +39,9 @@ class NetworkCall {
                 client.newCall(request).enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         Dialog.progressDialog?.dismiss()
-                        e.message?.let { Dialog.showMessage(activity,activity.getString(R.string.alert),it) }
+                        if(responseTag != ApiConstants.UPDATE_LOCATION){
+                            e.message?.let { Dialog.showMessage(context,context.getString(R.string.alert),it) }
+                        }
                     }
 
                     override fun onResponse(call: Call, response: Response) {
@@ -48,16 +51,20 @@ class NetworkCall {
                             jsonObject.put("response",response.body?.string())
                             response.close()
                             Log.d("response",jsonObject.toString())
-                            if(response.code == 200){ apiResponseListener?.onApiResponse(responseTag,jsonObject) }
-                            else{ JSONParser.parseErrorMessage(activity,jsonObject,responseTag,dialogClickListener) }
+                            if(response.code == 200){
+                                if(responseTag == ApiConstants.UPDATE_LOCATION){ Log.d("response","location updated") }
+                                apiResponseListener?.onApiResponse(responseTag,jsonObject)
+                            }
+                            else{ JSONParser.parseErrorMessage(context,jsonObject,responseTag,dialogClickListener) }
                         }
                     }
                 })
-            }else{ Dialog.showMessage(activity,ApiConstants.NO_INTERNET_MSG) }
+            }else{ apiResponseListener?.let { Dialog.showMessage(context,ApiConstants.NO_INTERNET_MSG) } }
         }
 
-        private fun getRequest(activity: Activity,responseType: String,url: String,params: HashMap<String, Any>?)
+        private fun getRequest(responseType: String,url: String,params: HashMap<String, Any>?)
            :Request{
+            Log.d("response","data : $params")
             val requestBody = when(responseType){
                 ApiConstants.RESPONSE_TYPE_EMPTY->{
                     FormBody.Builder().build()

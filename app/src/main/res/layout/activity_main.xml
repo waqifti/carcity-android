@@ -8,10 +8,12 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/my_locationTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:gravity="center"
+        android:text="My Location"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/logout_btn"
