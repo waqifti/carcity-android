@@ -1,10 +1,10 @@
 package com.nb.trackerapp.network
 
-import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.nb.trackerapp.R
 import com.nb.trackerapp.common.JSONParser
+import com.nb.trackerapp.common.StringUtils
 import com.nb.trackerapp.common.`interface`.OnApiResponseListener
 import com.nb.trackerapp.common.`interface`.OnDialogClickListener
 import com.nb.trackerapp.views.dialogs.Dialog
@@ -65,6 +65,8 @@ class NetworkCall {
         private fun getRequest(responseType: String,url: String,params: HashMap<String, Any>?)
            :Request{
             Log.d("response","data : $params")
+            var headerKey = ""
+            var headerValue = ""
             val requestBody = when(responseType){
                 ApiConstants.RESPONSE_TYPE_EMPTY->{
                     FormBody.Builder().build()
@@ -73,18 +75,30 @@ class NetworkCall {
                     val builder = FormBody.Builder()
                     params?.let {
                         for ((key, value) in it.entries) {
-                            builder.add(key, value.toString())
-                            //Log.d("response", "$key : $value")
+                            if(key.contains(ApiConstants.TOKEN)){
+                                headerKey = key.substringAfter("_")
+                                headerValue = value.toString()
+                            }else{
+                                builder.add(key, value.toString())
+                            }
                         }
                     }
                     builder.build()
                 }
             }
 
-            return Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build()
+            return if(StringUtils.isNotEmpty(headerKey)){
+                Request.Builder()
+                    .header(headerKey,headerValue)
+                    .url(url)
+                    .post(requestBody)
+                    .build()
+            }else{
+                Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build()
+            }
         }
     }
 }

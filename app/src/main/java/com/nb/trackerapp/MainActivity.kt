@@ -12,39 +12,43 @@ import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatTextView
-import com.nb.trackerapp.base.AppIntents
-import com.nb.trackerapp.base.AppSession
+import androidx.lifecycle.ProcessLifecycleOwner
+import com.nb.trackerapp.base.AppLifeCycleObserver
+import com.nb.trackerapp.common.JSONParser
+import com.nb.trackerapp.common.`interface`.OnApiResponseListener
 import com.nb.trackerapp.common.`interface`.OnDialogClickListener
-import com.nb.trackerapp.network.AlarmSettings
+import com.nb.trackerapp.data.LocationData
 import com.nb.trackerapp.network.ApiConstants
+import com.nb.trackerapp.network.LocationService
 import com.nb.trackerapp.network.MyLocation
-import com.nb.trackerapp.views.activities.AuthenticationActivity
 import com.nb.trackerapp.views.dialogs.Dialog
+import org.json.JSONObject
 
-class MainActivity : AppCompatActivity(),OnDialogClickListener,LocationListener {
+class MainActivity : AppCompatActivity(),OnDialogClickListener,OnApiResponseListener,LocationListener {
 
     private lateinit var myLocation: MyLocation
-    private lateinit var myLocationTv:AppCompatTextView
+    private lateinit var locationData: LocationData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // setting views
-        myLocationTv = findViewById(R.id.my_locationTv)
+        // binding data
+        locationData = LocationData(this,window.decorView,this)
+        locationData.bindData()
+
 
         // setting location object
         myLocation = MyLocation(this)
-        Log.d("response","user ${AppSession.getCurrentUser(this)}")
-
-        // setting alarm
-        AlarmSettings.setAlarm(this)
 
         // logout btn
         findViewById<AppCompatButton>(R.id.logout_btn).setOnClickListener {
-            moveToAuthenticationActivity()
+            locationData.moveToAuthenticationActivity()
         }
+
+        // initializing app state
+        val appLifeCycleObserver = AppLifeCycleObserver()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(appLifeCycleObserver)
     }
 
     override fun onResume() {
@@ -54,9 +58,19 @@ class MainActivity : AppCompatActivity(),OnDialogClickListener,LocationListener 
                 if (it.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     ApiConstants.IS_LOCATION_ENABLED = false
                     waitForLocation(it)
+                    locationData.startLocationService()
                 }else{ getUserCurrentLocation() }
             }
         }else{ getUserCurrentLocation() }
+    }
+
+    override fun onApiResponse(responseTag: String, jsonObject: JSONObject) {
+        when(responseTag){
+            ApiConstants.JOB_TYPE_LIST->{
+                val jobList = JSONParser.parseJobTypeList(jsonObject)
+                jobList?.let { locationData.bindJobTypes(it) }
+            }
+        }
     }
 
     override fun onDialogClick(dialogTag: String?, data: Any?) {
@@ -69,8 +83,7 @@ class MainActivity : AppCompatActivity(),OnDialogClickListener,LocationListener 
     }
 
     override fun onLocationChanged(location: Location) {
-        ApiConstants.USER_LOCATION = location
-        bindLocation(location)
+        locationData.bindLocation(location)
         MyLocation.updateLocation(this,location)
         Log.d("response","updated location : ${location.latitude} :: ${location.longitude}")
     }
@@ -78,9 +91,9 @@ class MainActivity : AppCompatActivity(),OnDialogClickListener,LocationListener 
     private fun getUserCurrentLocation(){
         val location = myLocation.getCurrentLocation()
         location?.let {
-            ApiConstants.USER_LOCATION = it
-            bindLocation(it)
+            locationData.bindLocation(it)
             MyLocation.updateLocation(this,it)
+            startService(Intent(this,LocationService::class.java))
             Log.d("response","current location : ${it.latitude} :: ${it.longitude}")
         } ?:run {
             Handler(Looper.getMainLooper()).postDelayed(Runnable {
@@ -92,7 +105,7 @@ class MainActivity : AppCompatActivity(),OnDialogClickListener,LocationListener 
 
     @SuppressLint("MissingPermission")
     private fun waitForLocation(locationManager: LocationManager){
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5F, this)
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0F, this)
         Dialog.showProgress(this,getString(R.string.wait_location))
         Handler(Looper.getMainLooper()).postDelayed(Runnable {
             Dialog.progressDialog?.dismiss()
@@ -102,26 +115,15 @@ class MainActivity : AppCompatActivity(),OnDialogClickListener,LocationListener 
 
     @SuppressLint("MissingPermission")
     private fun getLocation(locationManager: LocationManager){
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5F, this)
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0F, this)
         val location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         location?.let {
-            ApiConstants.USER_LOCATION = it
-            bindLocation(it)
+            locationData.bindLocation(it)
             MyLocation.updateLocation(this,it)
             Log.d("response","location : ${it.latitude} :: ${it.longitude}")
         } ?: run{
             Dialog.showMessage(this,getString(R.string.no_location),"Alert",
                 ApiConstants.GET_LOCATION,this)
         }
-    }
-
-    private fun moveToAuthenticationActivity(){
-        AlarmSettings.stopAlarm(this)
-        AppSession.setLoginStatus(this,false)
-        AppIntents.moveToActivity(this,true, Intent(this,AuthenticationActivity::class.java))
-    }
-
-    private fun bindLocation(location: Location?){
-        location?.let { myLocationTv.text = "My Location\nLatitude = ${it.latitude}\nLongitude = ${it.longitude}" }
     }
 }

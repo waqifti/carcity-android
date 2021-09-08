@@ -1,7 +1,5 @@
 package com.nb.trackerapp.network
 
-import android.location.Location
-
 object ApiConstants {
     const val BASE_URL = "http://18.118.199.175:9000/"
     const val NO_INTERNET_MSG = "No internet connection"
@@ -10,7 +8,10 @@ object ApiConstants {
     const val LOGIN_TAG = "login_tag"
     const val GET_LOCATION = "get_location"
     const val UPDATE_LOCATION = "update_location"
+    const val TOKEN = "token"
+    const val USER_TYPE_CUSTOMER = "Customer"
+    const val USER_TYPE_PROVIDER = "ServiceProvider"
+    const val JOB_TYPE_LIST = "job_type_list"
 
     var IS_LOCATION_ENABLED = false
-    var USER_LOCATION:Location? = null
 }

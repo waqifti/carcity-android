@@ -11,4 +11,5 @@ object AppConstants {
     const val ALARM_REQUEST_CODE = 101
 
     var CURRENT_USER: User? = null
+    var APP_STATE = "BACKGROUND"
 }

@@ -9,5 +9,9 @@ class ApiUrl {
         fun getUpdateLocationUrl(userType:String):String{
             return ApiConstants.BASE_URL+"Authenticated/$userType/UpdateLocation"
         }
+
+        fun getJobTypesUrl():String{
+            return ApiConstants.BASE_URL+"GetJobTypes"
+        }
     }
 }

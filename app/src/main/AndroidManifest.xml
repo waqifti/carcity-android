@@ -34,9 +34,13 @@
             android:windowSoftInputMode="adjustResize|stateHidden">
         </activity>
 
+        <service android:name=".network.LocationService"
+            android:exported="false"/>
+
         <receiver
-            android:name=".network.AlarmReceiver"
-            android:enabled="true">
+            android:name=".network.LocationReceiver"
+            android:enabled="true"
+            android:exported="false">
         </receiver>
     </application>
 </manifest>

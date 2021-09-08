@@ -82,7 +82,7 @@ class LoginData(private val activity: Activity,private val view: View,private va
         val params = HashMap<String,Any>()
         params["cell"] = phoneNumberEt.text.toString()
         params["password"] = passwordEt.text.toString()
-        params["ut"] = userTypeEt.text.toString()
+        params["ut"] = userTypeEt.text.toString().replace(" ","")
 
         NetworkCall.enqueueCall(activity,ApiUrl.getLoginUrl(),ApiConstants.RESPONSE_TYPE_PARAMS,ApiConstants.LOGIN_TAG,
         params,apiResponseListener)

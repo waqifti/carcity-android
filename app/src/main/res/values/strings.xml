@@ -8,4 +8,6 @@
     <string name="on_location">Please turn on your location.</string>
     <string name="wait_location">Please wait while getting location…</string>
     <string name="no_location">Unable to get location</string>
+    <string name="find_service_provider">Find Service Provider</string>
+    <string name="activate_job_search">Activate Job Search</string>
 </resources>
