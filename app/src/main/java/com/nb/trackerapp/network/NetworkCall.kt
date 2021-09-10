@@ -40,7 +40,7 @@ class NetworkCall {
                     override fun onFailure(call: Call, e: IOException) {
                         Dialog.progressDialog?.dismiss()
                         if(responseTag != ApiConstants.UPDATE_LOCATION){
-                            e.message?.let { Dialog.showMessage(context,context.getString(R.string.alert),it) }
+                            e.message?.let { Dialog.showMessage(context,it) }
                         }
                     }
 
