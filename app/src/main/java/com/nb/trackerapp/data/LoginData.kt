@@ -5,23 +5,30 @@ import android.content.Intent
 import android.text.InputType
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
+import com.google.firebase.messaging.FirebaseMessaging
 import com.nb.trackerapp.MainActivity
 import com.nb.trackerapp.R
 import com.nb.trackerapp.base.AppConstants
 import com.nb.trackerapp.base.AppIntents
 import com.nb.trackerapp.base.AppSession
+import com.nb.trackerapp.common.SoftKeyBoard
 import com.nb.trackerapp.common.StringUtils
 import com.nb.trackerapp.common.`interface`.OnApiResponseListener
+import com.nb.trackerapp.common.`interface`.OnDialogClickListener
 import com.nb.trackerapp.common.showErrorMessage
 import com.nb.trackerapp.models.User
 import com.nb.trackerapp.network.ApiConstants
 import com.nb.trackerapp.network.ApiUrl
 import com.nb.trackerapp.network.NetworkCall
+import java.lang.Exception
+import java.net.URLEncoder
 
-class LoginData(private val activity: Activity,private val view: View,private val apiResponseListener: OnApiResponseListener) {
+class LoginData(private val activity: Activity,private val view: View,private val apiResponseListener: OnApiResponseListener,
+    private val dialogClickListener: OnDialogClickListener) {
     private val optionLayout = view.findViewById<LinearLayout>(R.id.login_optionLayout)
     private val userTypeEt = view.findViewById<AppCompatEditText>(R.id.login_userTypeEt)
     private val phoneNumberEt = view.findViewById<AppCompatEditText>(R.id.login_phoneNumberEt)
@@ -56,7 +63,10 @@ class LoginData(private val activity: Activity,private val view: View,private va
 
         // login btn
         view.findViewById<AppCompatButton>(R.id.login_btn).setOnClickListener {
-            if(validateData()){ setLoginCall() }
+            if(validateData()){
+                SoftKeyBoard.hideKeyboard(view,activity)
+                setLoginCall()
+            }
         }
     }
 
@@ -81,11 +91,28 @@ class LoginData(private val activity: Activity,private val view: View,private va
     private fun setLoginCall(){
         val params = HashMap<String,Any>()
         params["cell"] = phoneNumberEt.text.toString()
+        params["fcmtoken"] = getDeviceToken()
         params["password"] = passwordEt.text.toString()
         params["ut"] = userTypeEt.text.toString().replace(" ","")
 
         NetworkCall.enqueueCall(activity,ApiUrl.getLoginUrl(),ApiConstants.RESPONSE_TYPE_PARAMS,ApiConstants.LOGIN_TAG,
-        params,apiResponseListener)
+        params,apiResponseListener,true,dialogClickListener)
+    }
+
+    private fun getDeviceToken() : String {
+        var token = ""
+        try {
+            AppSession.getDeviceToken(activity)?.let { token = it } ?: run {
+                FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                    if(it.isComplete){
+                        AppSession.setDeviceToken(activity,it.result.toString())
+                        token = it.result.toString()
+                    }
+                }
+            }
+        }catch (e: Exception){}
+
+        return token
     }
 
     fun moveToMainActivity(userToken:String){

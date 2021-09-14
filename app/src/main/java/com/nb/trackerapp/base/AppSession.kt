@@ -19,17 +19,17 @@ class AppSession {
             return sp.getBoolean(AppConstants.LOGIN_STATUS,false)
         }
 
-        /*fun setUserToken(context: Context,token: String){
+        fun setDeviceToken(context: Context,token: String){
             val sp = context.getSharedPreferences(AppConstants.AUTH_SHARED_PREFERENCE,Context.MODE_PRIVATE)
             val editor = sp.edit()
-            editor.putString(AppConstants.USER_TOKEN,token)
+            editor.putString(AppConstants.DEVICE_TOKEN,token)
             editor.apply()
         }
 
-        fun getUserToken(context: Context) : String?{
+        fun getDeviceToken(context: Context) : String?{
             val sp = context.getSharedPreferences(AppConstants.AUTH_SHARED_PREFERENCE,Context.MODE_PRIVATE)
-            return sp.getString(AppConstants.USER_TOKEN,null)
-        }*/
+            return sp.getString(AppConstants.DEVICE_TOKEN,null)
+        }
 
         fun setCurrentUser(context: Context,user: User){
             try {

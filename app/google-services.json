@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "569041739638",
+    "project_id": "carcity-af38e",
+    "storage_bucket": "carcity-af38e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569041739638:android:96e9e979e597d109a5e457",
+        "android_client_info": {
+          "package_name": "com.nb.trackerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "569041739638-4thqhol78lqeqhstbgo1m7orautginoa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nb.trackerapp",
+            "certificate_hash": "baa1fa55b6fc3553582b86238f68cee7bd8d6778"
+          }
+        },
+        {
+          "client_id": "569041739638-f950p6scnqf1c00ht6i6k2jjk071h4ts.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBymIE0AkLGKhf9VhGy7r04bf3_jgY6D2U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "569041739638-f950p6scnqf1c00ht6i6k2jjk071h4ts.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

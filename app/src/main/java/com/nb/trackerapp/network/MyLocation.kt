@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat
 import com.nb.trackerapp.base.AppConstants
 import com.nb.trackerapp.base.AppSession
 import com.nb.trackerapp.common.DateTime
+import com.nb.trackerapp.common.`interface`.OnDialogClickListener
 
 class MyLocation(private val activity: Activity) {
     fun getCurrentLocation(): Location?{
@@ -21,7 +22,7 @@ class MyLocation(private val activity: Activity) {
             // Grant permission
             return null
         }
-        return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
     }
 
     fun getLocationManager(): LocationManager {
@@ -29,18 +30,18 @@ class MyLocation(private val activity: Activity) {
     }
 
     companion object{
-        fun updateLocation(context: Context,location:Location?){
+        fun updateLocation(context: Context,location:Location?,dialogClickListener: OnDialogClickListener? = null){
             location?.let {
                 AppSession.getCurrentUser(context)?.let { user ->
                     val params = HashMap<String,Any>()
                     params["appstate"] = AppConstants.APP_STATE
                     params["lati"] = it.latitude
                     params["longi"] = it.longitude
-                    params["${ApiConstants.TOKEN}_sessiontoken"] = user.token
+                    params["${ApiConstants.HEADER}_sessiontoken"] = user.token
                     params["time"] = DateTime.getCurrentDateTime()
 
                     NetworkCall.enqueueCall(context,ApiUrl.getUpdateLocationUrl(user.type),ApiConstants.RESPONSE_TYPE_PARAMS,
-                        ApiConstants.UPDATE_LOCATION,params,null,false)
+                        ApiConstants.UPDATE_LOCATION,params,null,false,dialogClickListener)
                 }
             }
         }

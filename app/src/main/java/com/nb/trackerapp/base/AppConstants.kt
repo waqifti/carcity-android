@@ -7,8 +7,7 @@ object AppConstants {
     const val USER_DATA = "current_user.txt"
     const val AUTH_SHARED_PREFERENCE = "auth_sp"
     const val LOGIN_STATUS = "login_status"
-
-    const val ALARM_REQUEST_CODE = 101
+    const val DEVICE_TOKEN = "device_token"
 
     var CURRENT_USER: User? = null
     var APP_STATE = "BACKGROUND"

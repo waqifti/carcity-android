@@ -1,8 +1,7 @@
 package com.nb.trackerapp.common
 
-import android.app.Activity
 import android.content.Context
-import android.util.Log
+import com.nb.trackerapp.R
 import com.nb.trackerapp.common.`interface`.OnDialogClickListener
 import com.nb.trackerapp.models.Job
 import com.nb.trackerapp.network.ApiConstants
@@ -13,11 +12,20 @@ class JSONParser {
     companion object{
         fun parseErrorMessage(context: Context,jsonObject: JSONObject,responseTag:String? = null,
                               dialogClickListener: OnDialogClickListener? = null){
-            if(responseTag != ApiConstants.UPDATE_LOCATION){
-                val message = if(!jsonObject.isNull("response")){ jsonObject.getString("response") }
-                else{ "Something went wrong" }
-                Dialog.showMessage(context,message,"Alert",responseTag,dialogClickListener)
-            }
+            var dialogTag:String? = null
+            val message = if(!jsonObject.isNull("response")){
+                when (val responseMessage = jsonObject.getString("response")) {
+                    ApiConstants.SESSION_EXPIRED_MSG -> {
+                        dialogTag = ApiConstants.SESSION_EXPIRED
+                        context.getString(R.string.session_expired)
+                    }
+                    else -> {
+                        dialogTag = responseTag
+                        responseMessage
+                    }
+                }
+            }else{ "Something went wrong" }
+            dialogClickListener?.let { Dialog.showMessage(context,message,"Alert",dialogTag,it) }
         }
 
         fun parseJobTypeList(jsonObject: JSONObject) : ArrayList<Job>?{

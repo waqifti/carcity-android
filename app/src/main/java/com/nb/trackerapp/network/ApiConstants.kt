@@ -8,10 +8,12 @@ object ApiConstants {
     const val LOGIN_TAG = "login_tag"
     const val GET_LOCATION = "get_location"
     const val UPDATE_LOCATION = "update_location"
-    const val TOKEN = "token"
+    const val HEADER = "header"
     const val USER_TYPE_CUSTOMER = "Customer"
     const val USER_TYPE_PROVIDER = "ServiceProvider"
     const val JOB_TYPE_LIST = "job_type_list"
+    const val SESSION_EXPIRED = "session_expired"
+    const val SESSION_EXPIRED_MSG = "Wrong sessiontoken"
 
     var IS_LOCATION_ENABLED = false
 }

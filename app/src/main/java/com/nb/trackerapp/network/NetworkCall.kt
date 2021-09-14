@@ -28,11 +28,12 @@ class NetworkCall {
             if(Connectivity.isOnline(context)){
                 if(isProgress){ Dialog.showProgress(context) }
 
+                val connectionTime = if(responseTag == ApiConstants.UPDATE_LOCATION){ 2L } else{ 50L }
                 val client = OkHttpClient.Builder()
-                    .connectTimeout(50, TimeUnit.SECONDS)
-                    .callTimeout(50, TimeUnit.SECONDS)
-                    .writeTimeout(50, TimeUnit.SECONDS)
-                    .readTimeout(50, TimeUnit.SECONDS)
+                    .connectTimeout(connectionTime, TimeUnit.SECONDS)
+                    .callTimeout(connectionTime, TimeUnit.SECONDS)
+                    .writeTimeout(connectionTime, TimeUnit.SECONDS)
+                    .readTimeout(connectionTime, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(false)
                     .build()
 
@@ -75,7 +76,7 @@ class NetworkCall {
                     val builder = FormBody.Builder()
                     params?.let {
                         for ((key, value) in it.entries) {
-                            if(key.contains(ApiConstants.TOKEN)){
+                            if(key.contains(ApiConstants.HEADER)){
                                 headerKey = key.substringAfter("_")
                                 headerValue = value.toString()
                             }else{

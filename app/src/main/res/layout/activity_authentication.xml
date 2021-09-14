@@ -87,4 +87,18 @@
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:text="Login"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/auth_versionTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:text="Version : "/>
+    </RelativeLayout>
 </LinearLayout>

@@ -34,25 +34,27 @@ class Dialog {
                        dialogResponseListener: OnDialogClickListener? = null){
             val activity = context as Activity
             activity.runOnUiThread {
-                val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val builder = AlertDialog.Builder(activity)
-                val view = inflater.inflate(R.layout.dialog_message, null)
+                if(!activity.isFinishing){
+                    val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    val builder = AlertDialog.Builder(activity)
+                    val view = inflater.inflate(R.layout.dialog_message, null)
 
-                val titleTv = view.findViewById<AppCompatTextView>(R.id.dialog_titleTv)
-                val messageTv = view.findViewById<AppCompatTextView>(R.id.dialog_messageTv)
-                titleTv.text = title
-                messageTv.text = message
+                    val titleTv = view.findViewById<AppCompatTextView>(R.id.dialog_titleTv)
+                    val messageTv = view.findViewById<AppCompatTextView>(R.id.dialog_messageTv)
+                    titleTv.text = title
+                    messageTv.text = message
 
-                builder.setView(view)
-                builder.create()
-                val alertDialog = builder.show()
-                alertDialog.setCancelable(false)
-                alertDialog.setCanceledOnTouchOutside(false)
+                    builder.setView(view)
+                    builder.create()
+                    val alertDialog = builder.show()
+                    alertDialog.setCancelable(false)
+                    alertDialog.setCanceledOnTouchOutside(false)
 
-                // got it btn
-                view.findViewById<AppCompatButton>(R.id.dialog_gotItBtn).setOnClickListener {
-                    alertDialog.dismiss()
-                    dialogTag?.let { dialogResponseListener?.onDialogClick(it) }
+                    // got it btn
+                    view.findViewById<AppCompatButton>(R.id.dialog_gotItBtn).setOnClickListener {
+                        alertDialog.dismiss()
+                        dialogTag?.let { dialogResponseListener?.onDialogClick(it) }
+                    }
                 }
             }
         }

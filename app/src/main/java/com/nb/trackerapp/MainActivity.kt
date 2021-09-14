@@ -34,12 +34,12 @@ class MainActivity : AppCompatActivity(),OnDialogClickListener,OnApiResponseList
         setContentView(R.layout.activity_main)
 
         // binding data
-        locationData = LocationData(this,window.decorView,this)
+        locationData = LocationData(this,window.decorView,this,this)
         locationData.bindData()
-
 
         // setting location object
         myLocation = MyLocation(this)
+        startService(Intent(this, LocationService::class.java))
 
         // logout btn
         findViewById<AppCompatButton>(R.id.logout_btn).setOnClickListener {
@@ -53,15 +53,16 @@ class MainActivity : AppCompatActivity(),OnDialogClickListener,OnApiResponseList
 
     override fun onResume() {
         super.onResume()
-        if(ApiConstants.IS_LOCATION_ENABLED) {
-            myLocation.getLocationManager().let {
-                if (it.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    ApiConstants.IS_LOCATION_ENABLED = false
-                    waitForLocation(it)
-                    locationData.startLocationService()
-                }else{ getUserCurrentLocation() }
-            }
-        }else{ getUserCurrentLocation() }
+        myLocation.getLocationManager().let {
+            if (it.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                waitForLocation(it)
+            }else{ getUserCurrentLocation() }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Dialog.progressDialog?.dismiss()
     }
 
     override fun onApiResponse(responseTag: String, jsonObject: JSONObject) {
@@ -79,51 +80,67 @@ class MainActivity : AppCompatActivity(),OnDialogClickListener,OnApiResponseList
                 ApiConstants.IS_LOCATION_ENABLED = true
                 startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
             }
+            ApiConstants.SESSION_EXPIRED->{ locationData.moveToAuthenticationActivity() }
         }
     }
 
     override fun onLocationChanged(location: Location) {
-        locationData.bindLocation(location)
-        MyLocation.updateLocation(this,location)
+        Dialog.progressDialog?.dismiss()
+        //MyLocation.updateLocation(this,location,this)
         Log.d("response","updated location : ${location.latitude} :: ${location.longitude}")
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+        //super.onStatusChanged(provider, status, extras)
+        Log.d("response","onStatusChanged : $provider == status : $status")
+    }
+
+    override fun onProviderDisabled(provider: String) {
+        //super.onProviderDisabled(provider)
+        Log.d("response","onProviderDisabled : $provider")
+    }
+
+    override fun onProviderEnabled(provider: String) {
+        //super.onProviderEnabled(provider)
+        Log.d("response","onProviderEnabled : $provider")
     }
 
     private fun getUserCurrentLocation(){
         val location = myLocation.getCurrentLocation()
         location?.let {
-            locationData.bindLocation(it)
-            MyLocation.updateLocation(this,it)
-            startService(Intent(this,LocationService::class.java))
+            MyLocation.updateLocation(this,it,this)
             Log.d("response","current location : ${it.latitude} :: ${it.longitude}")
         } ?:run {
             Handler(Looper.getMainLooper()).postDelayed(Runnable {
                 Dialog.showMessage(this,getString(R.string.on_location),"Alert",
-                ApiConstants.GET_LOCATION,this)
+                    ApiConstants.GET_LOCATION, this)
             },200)
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun waitForLocation(locationManager: LocationManager){
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0F, this)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 1F, this)
         Dialog.showProgress(this,getString(R.string.wait_location))
         Handler(Looper.getMainLooper()).postDelayed(Runnable {
-            Dialog.progressDialog?.dismiss()
             getLocation(locationManager)
-        },2000)
+        },3000)
     }
 
     @SuppressLint("MissingPermission")
     private fun getLocation(locationManager: LocationManager){
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0F, this)
-        val location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 1F, this)
+        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1F, this)
+        //val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         location?.let {
-            locationData.bindLocation(it)
-            MyLocation.updateLocation(this,it)
+            Dialog.progressDialog?.dismiss()
+            MyLocation.updateLocation(this,it,this)
             Log.d("response","location : ${it.latitude} :: ${it.longitude}")
         } ?: run{
-            Dialog.showMessage(this,getString(R.string.no_location),"Alert",
-                ApiConstants.GET_LOCATION,this)
+            Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                getLocation(locationManager)
+            },500)
         }
     }
 }

@@ -1,13 +1,15 @@
 <resources>
-    <string name="app_name">TrackerApp</string>
+    <string name="app_name">Tracker App</string>
     <string name="login_title">Tracker App\nLogin</string>
     <string name="customer">Customer</string>
     <string name="service_provider">Service Provider</string>
     <string name="alert">Alert</string>
     <string name="permissions_required">Permissions Required</string>
-    <string name="on_location">Please turn on your location.</string>
+    <string name="on_location">Please turn on your location and enable gps.</string>
+    <string name="on_gps">Please enable gps option.</string>
     <string name="wait_location">Please wait while getting location…</string>
     <string name="no_location">Unable to get location</string>
     <string name="find_service_provider">Find Service Provider</string>
     <string name="activate_job_search">Activate Job Search</string>
+    <string name="session_expired">Your session has been expired, please login again</string>
 </resources>
