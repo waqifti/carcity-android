@@ -2,7 +2,6 @@ package com.nb.trackerapp.network
 
 import android.content.Context
 import android.util.Log
-import com.nb.trackerapp.R
 import com.nb.trackerapp.common.JSONParser
 import com.nb.trackerapp.common.StringUtils
 import com.nb.trackerapp.common.`interface`.OnApiResponseListener
@@ -60,7 +59,7 @@ class NetworkCall {
                         }
                     }
                 })
-            }else{ apiResponseListener?.let { Dialog.showMessage(context,ApiConstants.NO_INTERNET_MSG) } }
+            }else{ if (responseTag != ApiConstants.UPDATE_LOCATION){ Dialog.showMessage(context,ApiConstants.NO_INTERNET_MSG) } }
         }
 
         private fun getRequest(responseType: String,url: String,params: HashMap<String, Any>?)

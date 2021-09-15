@@ -12,4 +12,5 @@
     <string name="find_service_provider">Find Service Provider</string>
     <string name="activate_job_search">Activate Job Search</string>
     <string name="session_expired">Your session has been expired, please login again</string>
+    <string name="view_job_details">View Job Details</string>
 </resources>

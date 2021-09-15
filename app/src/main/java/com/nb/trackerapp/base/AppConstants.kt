@@ -1,5 +1,6 @@
 package com.nb.trackerapp.base
 
+import androidx.fragment.app.FragmentManager
 import com.nb.trackerapp.models.User
 
 object AppConstants {
@@ -9,6 +10,7 @@ object AppConstants {
     const val LOGIN_STATUS = "login_status"
     const val DEVICE_TOKEN = "device_token"
 
+    var FRAGMENT_MANAGER: FragmentManager? = null
     var CURRENT_USER: User? = null
     var APP_STATE = "BACKGROUND"
 }

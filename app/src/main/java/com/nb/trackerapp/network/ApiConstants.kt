@@ -14,6 +14,8 @@ object ApiConstants {
     const val JOB_TYPE_LIST = "job_type_list"
     const val SESSION_EXPIRED = "session_expired"
     const val SESSION_EXPIRED_MSG = "Wrong sessiontoken"
-
-    var IS_LOCATION_ENABLED = false
+    const val PROVIDER_GPS = "GPS"
+    const val PROVIDER_NETWORK = "NETWORK"
+    const val CUSTOMER_JOB_REQUEST = "customer_job_request"
+    const val JOB_DETAILS = "job_details"
 }

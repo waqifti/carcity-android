@@ -1,8 +1,8 @@
 package com.nb.trackerapp.common
 
-import android.app.Activity
+import android.content.Context
 import com.nb.trackerapp.views.dialogs.Dialog
 
-fun showErrorMessage(activity: Activity,message:String){
-    Dialog.showMessage(activity,message)
+fun showErrorMessage(context: Context,message:String){
+    Dialog.showMessage(context,message)
 }

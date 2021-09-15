@@ -13,16 +13,22 @@ import com.nb.trackerapp.common.DateTime
 import com.nb.trackerapp.common.`interface`.OnDialogClickListener
 
 class MyLocation(private val activity: Activity) {
-    fun getCurrentLocation(): Location?{
+    fun getCurrentLocation(): HashMap<String,Any?>{
         val locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             // Grant permission
-            return null
+            return HashMap()
         }
-        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+
+        val gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        val locationData = HashMap<String,Any?>()
+        locationData["location"] = gpsLocation ?: networkLocation
+        locationData["locationProvider"] = getLocationProvider(gpsLocation,networkLocation)
+        return locationData
     }
 
     fun getLocationManager(): LocationManager {
@@ -30,13 +36,15 @@ class MyLocation(private val activity: Activity) {
     }
 
     companion object{
-        fun updateLocation(context: Context,location:Location?,dialogClickListener: OnDialogClickListener? = null){
+        fun updateLocation(context: Context,location:Location?,locationProvider:String,
+                           dialogClickListener: OnDialogClickListener? = null){
             location?.let {
                 AppSession.getCurrentUser(context)?.let { user ->
                     val params = HashMap<String,Any>()
                     params["appstate"] = AppConstants.APP_STATE
                     params["lati"] = it.latitude
                     params["longi"] = it.longitude
+                    params["locationprovider"] = locationProvider
                     params["${ApiConstants.HEADER}_sessiontoken"] = user.token
                     params["time"] = DateTime.getCurrentDateTime()
 
@@ -44,6 +52,10 @@ class MyLocation(private val activity: Activity) {
                         ApiConstants.UPDATE_LOCATION,params,null,false,dialogClickListener)
                 }
             }
+        }
+
+        fun getLocationProvider(gpsLocation:Location?,networkLocation:Location?):String{
+            return gpsLocation?.let { ApiConstants.PROVIDER_GPS } ?: run { ApiConstants.PROVIDER_NETWORK }
         }
     }
 }

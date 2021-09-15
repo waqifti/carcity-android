@@ -21,6 +21,7 @@ import java.lang.UnsupportedOperationException
 class LocationService : Service(),LocationListener {
 
     private var userLocation:Location? = null
+    private var locationProvider:String = ApiConstants.PROVIDER_NETWORK
     override fun onBind(intent: Intent?): IBinder? {
         throw UnsupportedOperationException("Not yet implemented")
     }
@@ -63,7 +64,7 @@ class LocationService : Service(),LocationListener {
 
     private fun updateUserLocation(){
         Log.d("response","update location called from service : $userLocation")
-        MyLocation.updateLocation(this,userLocation)
+        MyLocation.updateLocation(this,userLocation,locationProvider)
         sendSignalToReceiver()
         stopSelf()
     }
@@ -92,10 +93,11 @@ class LocationService : Service(),LocationListener {
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {}
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 1F, this)
             val gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 2F, this)
-            //val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            Log.d("response","gpsLocation : $gpsLocation")
-            userLocation = gpsLocation
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1F, this)
+            val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+
+            userLocation = gpsLocation ?: networkLocation
+            locationProvider = MyLocation.getLocationProvider(gpsLocation,networkLocation)
         })
     }
 }

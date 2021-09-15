@@ -8,19 +8,33 @@ import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.nb.trackerapp.R
-import com.nb.trackerapp.models.Job
+import com.nb.trackerapp.models.JobType
 
-class JobsDropDownAdapter(val context: Context,private val jobIdList:ArrayList<Job>) :
+class JobsDropDownAdapter(val context: Context,private val jobTypeList:ArrayList<JobType>) :
     RecyclerView.Adapter<JobsDropDownAdapter.JobViewHolder>() {
 
     private val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     class JobViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView){
-        private val jobIdTv = itemView.findViewById<AppCompatTextView>(R.id.single_job_idTv)
+        private val jobTypeTv = itemView.findViewById<AppCompatTextView>(R.id.single_job_typeTv)
         private val checkBox = itemView.findViewById<AppCompatCheckBox>(R.id.single_job_idCheckBox)
 
-        fun bindData(job: Job){
-            jobIdTv.text = job.id
-            checkBox.isChecked = job.isChecked
+        fun bindData(jobType: JobType){
+            jobTypeTv.text = jobType.type
+            checkBox.isChecked = jobType.isChecked
+
+            checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                addSelectedJob(jobType.type,isChecked)
+            }
+        }
+
+        private fun addSelectedJob(jobType:String,isChecked:Boolean){
+            if(isChecked){ JobType.selectedJobList.add(jobType) }
+            else{
+                if(!JobType.selectedJobList.isNullOrEmpty() && JobType.selectedJobList.size != 0) {
+                    val findItem = JobType.selectedJobList.find { it == jobType }
+                    findItem?.let { JobType.selectedJobList.remove(it) }
+                }
+            }
         }
     }
 
@@ -29,10 +43,10 @@ class JobsDropDownAdapter(val context: Context,private val jobIdList:ArrayList<J
     }
 
     override fun onBindViewHolder(holder: JobViewHolder, position: Int) {
-        holder.bindData(jobIdList[position])
+        holder.bindData(jobTypeList[position])
     }
 
     override fun getItemCount(): Int {
-        return jobIdList.size
+        return jobTypeList.size
     }
 }

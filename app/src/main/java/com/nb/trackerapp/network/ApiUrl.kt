@@ -13,5 +13,13 @@ class ApiUrl {
         fun getJobTypesUrl():String{
             return ApiConstants.BASE_URL+"GetJobTypes"
         }
+
+        fun getJobRequestUrl(userType:String):String{
+            return ApiConstants.BASE_URL+"Authenticated/$userType/createJobRequest"
+        }
+
+        fun getJobDetailsUrl(userType:String):String{
+            return ApiConstants.BASE_URL+"Authenticated/$userType/getJobDetails"
+        }
     }
 }

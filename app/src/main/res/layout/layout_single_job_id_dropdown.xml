@@ -12,12 +12,12 @@
         android:weightSum="1">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/single_job_idTv"
+            android:id="@+id/single_job_typeTv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Job Id"
+            android:text="Job Type"
             android:textSize="@dimen/_10sdp"/>
 
         <androidx.appcompat.widget.AppCompatCheckBox
