@@ -51,11 +51,18 @@ class NetworkCall {
                             jsonObject.put("response",response.body?.string())
                             response.close()
                             Log.d("response",jsonObject.toString())
-                            if(response.code == 200){
-                                if(responseTag == ApiConstants.UPDATE_LOCATION){ Log.d("response","location updated") }
-                                apiResponseListener?.onApiResponse(responseTag,jsonObject)
+                            when{
+                                (response.code == 200)->{
+                                    if(responseTag == ApiConstants.UPDATE_LOCATION){ Log.d("response","location updated") }
+                                    apiResponseListener?.onApiResponse(responseTag,jsonObject)
+                                }
+                                (responseTag == ApiConstants.ASSIGNED_JOB_DETAILS)->{
+                                    apiResponseListener?.onApiResponse(responseTag,jsonObject)
+                                }
+                                else->{
+                                    JSONParser.parseErrorMessage(context,jsonObject,responseTag,dialogClickListener)
+                                }
                             }
-                            else{ JSONParser.parseErrorMessage(context,jsonObject,responseTag,dialogClickListener) }
                         }
                     }
                 })

@@ -21,5 +21,9 @@ class ApiUrl {
         fun getJobDetailsUrl(userType:String):String{
             return ApiConstants.BASE_URL+"Authenticated/$userType/getJobDetails"
         }
+
+        fun getAssignedJobDetailsUrl(userType:String):String{
+            return ApiConstants.BASE_URL+"Authenticated/$userType/getAssignedJobDetails"
+        }
     }
 }

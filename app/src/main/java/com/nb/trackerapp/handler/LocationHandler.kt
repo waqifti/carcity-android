@@ -29,6 +29,16 @@ class LocationHandler {
                     val jobId = jsonObject.getString("response")
                     locationData.moveToJobDetailFragment(jobId)
                 }
+                ApiConstants.ASSIGNED_JOB_DETAILS->{
+                    val assignedJobDetails = jsonObject.getString("response")
+                    locationData.bindAssignedJobDetailsData(assignedJobDetails)
+                }
+            }
+        }
+
+        fun handleItemSelectedResponse(tag: String,data:Any?,locationData: LocationData){
+            when(tag){
+                ApiConstants.DATE_TIME_PICKER->{ locationData.bindSelectedDateTime(data.toString()) }
             }
         }
     }

@@ -12,5 +12,6 @@ object AppConstants {
 
     var FRAGMENT_MANAGER: FragmentManager? = null
     var CURRENT_USER: User? = null
+    var sendLocationForFirstTime = true
     var APP_STATE = "BACKGROUND"
 }

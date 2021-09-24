@@ -18,4 +18,6 @@ object ApiConstants {
     const val PROVIDER_NETWORK = "NETWORK"
     const val CUSTOMER_JOB_REQUEST = "customer_job_request"
     const val JOB_DETAILS = "job_details"
+    const val DATE_TIME_PICKER = "date_time_picker"
+    const val ASSIGNED_JOB_DETAILS = "assigned_job_details"
 }

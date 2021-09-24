@@ -10,7 +10,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +17,10 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.nb.trackerapp.R
 import com.nb.trackerapp.base.AppConstants
+import com.nb.trackerapp.base.AppSession
 import com.nb.trackerapp.common.`interface`.OnApiResponseListener
 import com.nb.trackerapp.common.`interface`.OnDialogClickListener
+import com.nb.trackerapp.common.`interface`.OnItemSelectedListener
 import com.nb.trackerapp.data.LocationData
 import com.nb.trackerapp.handler.LocationHandler
 import com.nb.trackerapp.network.ApiConstants
@@ -28,7 +29,7 @@ import com.nb.trackerapp.network.MyLocation
 import com.nb.trackerapp.views.dialogs.Dialog
 import org.json.JSONObject
 
-class LocationFragment : Fragment(),OnApiResponseListener,OnDialogClickListener,LocationListener {
+class LocationFragment : Fragment(),OnApiResponseListener,OnDialogClickListener,OnItemSelectedListener,LocationListener {
 
     private lateinit var myLocation: MyLocation
     private lateinit var locationData: LocationData
@@ -46,13 +47,19 @@ class LocationFragment : Fragment(),OnApiResponseListener,OnDialogClickListener,
         super.onViewCreated(view, savedInstanceState)
         AppConstants.FRAGMENT_MANAGER = activity?.supportFragmentManager
 
-        // binding data
-        locationData = LocationData(ctx!!,view,this,this)
-        locationData.bindData()
-
         // setting location object
         myLocation = MyLocation(ctx as Activity)
-        ctx!!.startService(Intent(ctx, LocationService::class.java))
+
+        // binding data
+        val user = AppSession.getCurrentUser(ctx!!)
+        locationData = LocationData(ctx!!,view,myLocation,user,this,this,
+            this,this)
+        locationData.bindData()
+
+        // starting background service for location updates
+        if(user?.type == ApiConstants.USER_TYPE_PROVIDER) {
+            ctx!!.startService(Intent(ctx, LocationService::class.java))
+        }
 
         // logout btn
         view.findViewById<AppCompatButton>(R.id.location_logoutBtn).setOnClickListener {
@@ -83,24 +90,22 @@ class LocationFragment : Fragment(),OnApiResponseListener,OnDialogClickListener,
         LocationHandler.handleDialogResponse(ctx as Activity,dialogTag,locationData)
     }
 
-    override fun onLocationChanged(location: Location) {
-        //MyLocation.updateLocation(this,location,this)
-        Log.d("response","updated location : ${location.latitude} :: ${location.longitude}")
+    override fun onItemSelected(tag: String, data: Any?) {
+        LocationHandler.handleItemSelectedResponse(tag,data,locationData)
     }
+
+    override fun onLocationChanged(location: Location) {}
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
         //super.onStatusChanged(provider, status, extras)
-        Log.d("response","onStatusChanged : $provider == status : $status")
     }
 
     override fun onProviderDisabled(provider: String) {
         //super.onProviderDisabled(provider)
-        Log.d("response","onProviderDisabled : $provider")
     }
 
     override fun onProviderEnabled(provider: String) {
         //super.onProviderEnabled(provider)
-        Log.d("response","onProviderEnabled : $provider")
     }
 
     private fun getUserCurrentLocation(){
@@ -109,7 +114,6 @@ class LocationFragment : Fragment(),OnApiResponseListener,OnDialogClickListener,
         val locationProvider = locationData["locationProvider"].toString()
         location?.let {
             MyLocation.updateLocation(ctx!!,it,locationProvider,this)
-            Log.d("response","current location : ${it.latitude} :: ${it.longitude}")
         } ?:run {
             Handler(Looper.getMainLooper()).postDelayed(Runnable {
                 Dialog.showMessage(ctx!!,getString(R.string.on_location),"Alert",
@@ -121,9 +125,8 @@ class LocationFragment : Fragment(),OnApiResponseListener,OnDialogClickListener,
     @SuppressLint("MissingPermission")
     private fun waitForLocation(locationManager: LocationManager){
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 1F, this)
-        //Dialog.showProgress(this,getString(R.string.wait_location))
+        Dialog.showProgress(ctx!!,getString(R.string.wait_location))
         Handler(Looper.getMainLooper()).postDelayed(Runnable {
-            //Dialog.progressDialog?.dismiss()
             getLocation(locationManager)
         },2000)
     }
@@ -132,18 +135,21 @@ class LocationFragment : Fragment(),OnApiResponseListener,OnDialogClickListener,
     private fun getLocation(locationManager: LocationManager){
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 1F, this)
         val gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1F, this)
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 0F, this)
         val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-        /*val location = gpsLocation ?: networkLocation
-        val locationProvider = MyLocation.getLocationProvider(gpsLocation,networkLocation)
+        val location = gpsLocation ?: networkLocation
+        val locationProvider = MyLocation.getLocationProvider(gpsLocation)
         location?.let {
-            MyLocation.updateLocation(this,it,locationProvider,this)
-            Log.d("response","location : ${it.latitude} :: ${it.longitude}")
+            Dialog.progressDialog?.dismiss()
+            if(AppConstants.sendLocationForFirstTime) {
+                AppConstants.sendLocationForFirstTime = false
+                MyLocation.updateLocation(ctx!!, it, locationProvider, this)
+            }
         } ?: run{
             Handler(Looper.getMainLooper()).postDelayed(Runnable {
                 getLocation(locationManager)
-            },500)
-        }*/
+            },1000)
+        }
     }
 }

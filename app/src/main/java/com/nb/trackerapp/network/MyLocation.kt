@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.nb.trackerapp.base.AppConstants
@@ -27,12 +28,23 @@ class MyLocation(private val activity: Activity) {
         val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         val locationData = HashMap<String,Any?>()
         locationData["location"] = gpsLocation ?: networkLocation
-        locationData["locationProvider"] = getLocationProvider(gpsLocation,networkLocation)
+        locationData["locationProvider"] = getLocationProvider(gpsLocation)
         return locationData
     }
 
     fun getLocationManager(): LocationManager {
         return activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    }
+
+    fun getGpsLocation(context: Context,locationListener: LocationListener) : Location?{
+        val locationManager = getLocationManager()
+        if (ActivityCompat.checkSelfPermission(context,Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 1F, locationListener)
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
     }
 
     companion object{
@@ -54,7 +66,7 @@ class MyLocation(private val activity: Activity) {
             }
         }
 
-        fun getLocationProvider(gpsLocation:Location?,networkLocation:Location?):String{
+        fun getLocationProvider(gpsLocation:Location?):String{
             return gpsLocation?.let { ApiConstants.PROVIDER_GPS } ?: run { ApiConstants.PROVIDER_NETWORK }
         }
     }

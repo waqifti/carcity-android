@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.nb.trackerapp.base.AppSession
 import java.lang.Exception
@@ -49,21 +48,17 @@ class LocationService : Service(),LocationListener {
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
         //super.onStatusChanged(provider, status, extras)
-        Log.d("response","service onStatusChanged : $provider == status : $status")
     }
 
     override fun onProviderDisabled(provider: String) {
         //super.onProviderDisabled(provider)
-        Log.d("response","service onProviderDisabled : $provider")
     }
 
     override fun onProviderEnabled(provider: String) {
         //super.onProviderEnabled(provider)
-        Log.d("response","service onProviderEnabled : $provider")
     }
 
     private fun updateUserLocation(){
-        Log.d("response","update location called from service : $userLocation")
         MyLocation.updateLocation(this,userLocation,locationProvider)
         sendSignalToReceiver()
         stopSelf()
@@ -97,7 +92,7 @@ class LocationService : Service(),LocationListener {
             val networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
             userLocation = gpsLocation ?: networkLocation
-            locationProvider = MyLocation.getLocationProvider(gpsLocation,networkLocation)
+            locationProvider = MyLocation.getLocationProvider(gpsLocation)
         })
     }
 }
