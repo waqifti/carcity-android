@@ -27,12 +27,14 @@ import com.nb.trackerapp.common.`interface`.OnApiResponseListener
 import com.nb.trackerapp.common.`interface`.OnDialogClickListener
 import com.nb.trackerapp.common.`interface`.OnItemSelectedListener
 import com.nb.trackerapp.common.showErrorMessage
+import com.nb.trackerapp.models.Job
 import com.nb.trackerapp.models.JobType
 import com.nb.trackerapp.models.User
 import com.nb.trackerapp.network.*
 import com.nb.trackerapp.views.activities.AuthenticationActivity
 import com.nb.trackerapp.views.adapters.JobsDropDownAdapter
 import com.nb.trackerapp.views.fragments.JobDetailFragment
+import org.json.JSONObject
 import java.lang.Exception
 
 class LocationData(private val context: Context,private val view: View,private val myLocation: MyLocation,private val user: User?,
@@ -47,6 +49,7 @@ class LocationData(private val context: Context,private val view: View,private v
     private val jobIddRecyclerView = view.findViewById<RecyclerView>(R.id.location_job_iddRecyclerView)
     private val versionTv = view.findViewById<AppCompatTextView>(R.id.location_versionTv)
     private val serviceTv = view.findViewById<AppCompatTextView>(R.id.location_serviceTv)
+    private val serviceTv2 = view.findViewById<AppCompatTextView>(R.id.location_serviceTv2)
 
     fun bindData(){
         Log.d("response","user $user")
@@ -98,10 +101,34 @@ class LocationData(private val context: Context,private val view: View,private v
         timeEt.setText(dateTime)
     }
 
-    fun bindAssignedJobDetailsData(jobDetails:String?){
+    fun bindAssignedJobDetailsData(job: Job?){
         (context as Activity).runOnUiThread {
             serviceTv.visibility = View.VISIBLE
-            serviceTv.text = jobDetails
+            serviceTv2.visibility = View.VISIBLE
+            if (job != null) {
+
+                if(job.assignedto.isNullOrBlank()){
+                    serviceTv.text = "Server Bad case."
+                } else {
+                    if(job.assignedtodetails.currentlongi.isNaN()){
+                        serviceTv.text = "Customer info : ${job.createdby}\n" +
+                                "Current Location : Location Not Available."
+                    } else {
+
+                        //http://maps.google.com/maps?q=loc:31.47727302275598,74.39065941609442
+
+                        serviceTv.text =  "Customer info : ${job.createdby}\nClick below to get direction to job location."
+                        serviceTv2.text = "http://maps.google.com/maps?q=loc:${job.lati},${job.longi}"
+                    }
+
+                }
+
+            } else {
+                serviceTv.text = "No job assigned to you yet."
+            }
+
+
+
         }
     }
 

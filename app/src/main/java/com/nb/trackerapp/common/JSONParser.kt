@@ -2,6 +2,7 @@ package com.nb.trackerapp.common
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.nb.trackerapp.R
 import com.nb.trackerapp.common.`interface`.OnDialogClickListener
 import com.nb.trackerapp.models.Job
@@ -44,12 +45,18 @@ class JSONParser {
 
         fun parseJobObject(jsonObject: JSONObject) : Job?{
             var job:Job? = null
-            if(!jsonObject.isNull("response")){
-                val obj = jsonObject.getString("response")
-                val jobObject = JSONObject(obj)
 
-                val gson = Gson()
-                job = gson.fromJson(jobObject.toString(),Job::class.java)
+            try {
+                if(!jsonObject.isNull("response")){
+                    val obj = jsonObject.getString("response")
+                    val jobObject = JSONObject(obj)
+
+                    val gson = Gson()
+                    job = gson.fromJson(jobObject.toString(),Job::class.java)
+                }
+            }catch(e: Exception){
+
+                //show toast/snackabar/log here
             }
 
             return job

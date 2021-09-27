@@ -7,5 +7,9 @@ data class Job(
     val description:String?,
     val notes:String?,
     val assignedto:String?,
-    val managedby:String?
+    val managedby:String?,
+    val createdby:String?,
+    val longi:Double,
+    val lati:Double,
+    val assignedtodetails:ServiceProviderUserDTO
 )

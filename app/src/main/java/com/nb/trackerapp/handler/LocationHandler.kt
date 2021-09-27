@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
 import com.nb.trackerapp.common.JSONParser
+import com.nb.trackerapp.data.JobDetailData
 import com.nb.trackerapp.data.LocationData
+import com.nb.trackerapp.models.Job
 import com.nb.trackerapp.network.ApiConstants
 import org.json.JSONObject
 
@@ -30,8 +32,11 @@ class LocationHandler {
                     locationData.moveToJobDetailFragment(jobId)
                 }
                 ApiConstants.ASSIGNED_JOB_DETAILS->{
-                    val assignedJobDetails = jsonObject.getString("response")
-                    locationData.bindAssignedJobDetailsData(assignedJobDetails)
+                    //val assignedJobDetails = jsonObject.getString("response")
+                    val objJob = JSONParser.parseJobObject(jsonObject)
+
+
+                    locationData.bindAssignedJobDetailsData(objJob)
                 }
             }
         }

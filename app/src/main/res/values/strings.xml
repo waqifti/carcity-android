@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Tracker App</string>
-    <string name="login_title">Tracker App\nLogin</string>
+    <string name="login_title">Car City</string>
     <string name="customer">Customer</string>
     <string name="service_provider">Service Provider</string>
     <string name="alert">Alert</string>

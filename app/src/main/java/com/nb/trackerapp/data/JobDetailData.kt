@@ -14,11 +14,26 @@ import com.nb.trackerapp.network.NetworkCall
 
 class JobDetailData(private val context: Context, view: View, private val apiResponseListener: OnApiResponseListener) {
     private val jobDetailTv = view.findViewById<AppCompatTextView>(R.id.job_detailTv)
+    private val jobDetailTv2 = view.findViewById<AppCompatTextView>(R.id.job_detailTv2)
 
     fun bindJobData(job: Job){
         (context as Activity).runOnUiThread {
-            jobDetailTv.text = "State : ${job.state}\nDescription :${job.description}\nNotes : ${job.notes}\n" +
-                    "Assigned to : ${job.assignedto}"
+            if(job.assignedto.isNullOrBlank()){
+                jobDetailTv.text = "Waiting for Service Provider to be assigned."
+            } else {
+                if(job.assignedtodetails.currentlongi.isNaN()){
+                    jobDetailTv.text = "State : ${job.state}\nAssigned to : ${job.assignedto}\n" +
+                            "Current Location : Location Not Available."
+                } else {
+
+                    //http://maps.google.com/maps?q=loc:31.47727302275598,74.39065941609442
+
+                    jobDetailTv.text = "State : ${job.state}\nAssigned to : ${job.assignedto}\n\n Click below to track the service provider assigned to you"
+                    jobDetailTv2.text = "http://maps.google.com/maps?q=loc:${job.assignedtodetails.currentlati},${job.assignedtodetails.currentlongi}"
+                }
+
+            }
+
         }
     }
 

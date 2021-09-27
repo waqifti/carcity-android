@@ -11,6 +11,15 @@
         android:layout_marginTop="@dimen/_50sdp"
         android:layout_gravity="center"/>
 
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/job_detailTv2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:autoLink="web" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/job_detailBtn"
         android:layout_width="wrap_content"

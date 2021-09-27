@@ -96,6 +96,15 @@
                 android:layout_marginTop="20dp"
                 android:visibility="gone"/>
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/location_serviceTv2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                android:autoLink="web"/>
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/location_logoutBtn"
                 android:layout_width="wrap_content"
