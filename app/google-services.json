@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "530535989279",
+    "project_id": "car-city-4a0ad",
+    "storage_bucket": "car-city-4a0ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530535989279:android:982eb700894c91bc27d52a",
+        "android_client_info": {
+          "package_name": "carcity.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530535989279-hqsjjh8dr60htk4rp0dlategi8gctsnn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "carcity.app",
+            "certificate_hash": "5108d3cd93befe1b5eb6e965716229866ee98004"
+          }
+        },
+        {
+          "client_id": "530535989279-koo4pftqk3ftv1kvnqv4r3o304grmsde.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1vyRQR4rpXveKry1qLPtMUiKlPXbN8o0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530535989279-koo4pftqk3ftv1kvnqv4r3o304grmsde.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
