@@ -34,6 +34,7 @@ import com.google.firebase.installations.Utils;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,49 +54,16 @@ public class MainActivity extends AppCompatActivity {
     String fcmToken;
     KProgressHUD progressDialog = null;
     Activity activity;
-    String urlLogin = "http://18.118.199.175:9000/Login";
+    String urlLogin = "http://18.118.199.175:9000/Login?cell=3334543256&fcmtoken=asdaskdaskdkasndkasd&password=333444555&ut=Customer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activity = this;
-        requestPermission();
         setViews();
         setListeners();
         getDeviceToken();
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE},
-                1);
-    }
-
-    @SuppressLint("MissingSuperCall")
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(MainActivity.this, "Permission denied", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
     }
 
     public void setViews(){
@@ -113,18 +81,18 @@ public class MainActivity extends AppCompatActivity {
                 String password=editTextPassword.getText().toString();
                 String userType=editTextUserTpe.getText().toString();
 
-                try {
-                    progressDialog = KProgressHUD.create(activity)
-                            .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                            .setLabel("Verifying User")
-                            .setCancellable(false)
-                            .setAnimationSpeed(1)
-                            .setDimAmount(0.5f)
-                            .show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                loginUser2(phoneNumber, password, userType);
+//                try {
+//                    progressDialog = KProgressHUD.create(activity)
+//                            .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+//                            .setLabel("Verifying User")
+//                            .setCancellable(false)
+//                            .setAnimationSpeed(1)
+//                            .setDimAmount(0.5f)
+//                            .show();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+                loginUser(phoneNumber, password, userType);
             }
         });
     }
@@ -150,16 +118,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginUser(String phoneNumber, String password, String userType) {
-        Map<String, String> params = new HashMap<>();
-        params.put("cell", phoneNumber);
-        params.put("password", password);
-        params.put("ut", userType);
-        params.put("fcmtoken", fcmToken);
-        params.put("Content-Type", "application/json");
-        params.put("Authorization", "Bearer " + fcmToken);
-        Log.d(TAG, "params body: "+ params.toString());
+//        Map<String, String> params = new HashMap<>();
+//        params.put("cell", phoneNumber);
+//        params.put("password", password);
+//        params.put("ut", userType);
+//        Log.d(TAG, "params body: "+ params.toString());
 
-        JSONObject parameters = new JSONObject(params);
+//        JSONObject parameters = new JSONObject(params);
+
+        JSONObject parameters = new JSONObject();
+        try {
+//            parameters.put("cell", 92306224);
+//            parameters.put("password", password);
+//            parameters.put("ut", "userType");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "JSONException: "+ e.toString());
+        }
+
+
         JsonObjectRequest  jsonRequest = new JsonObjectRequest
                 (Request.Method.POST, urlLogin, parameters, new Response.Listener<JSONObject>() {
                     @Override
