@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -54,9 +57,19 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activity = this;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            String channelId  = getString(R.string.default_notification_channel_id);
+            String channelName = getString(R.string.default_notification_channel_name);
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW));
+        }
+
         setViews();
         setListeners();
-        fcmToken = CommonMethods.getDeviceToken();
     }
 
     public void setViews(){
@@ -113,7 +126,18 @@ public class LoginActivity extends AppCompatActivity {
                                 .setAnimationSpeed(1)
                                 .setDimAmount(0.5f)
                                 .show();
-                        loginUser(cellNumber, password, userType);
+                        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                            @Override
+                            public void onComplete(@NonNull Task<String> task) {
+                                if (!task.isSuccessful()) {
+                                    return;
+                                }
+
+                                // Get new FCM registration token
+                                fcmToken = task.getResult();
+                                loginUser(cellNumber, password, userType);
+                            }
+                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -123,14 +147,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser(String cellNumber, String password, String userType) {
+        Log.d(TAG, "fcmToken: "+fcmToken);
         String urlLogin = Constants.URL_LOGIN+"?cell="+cellNumber+"&fcmtoken="+fcmToken+"&password="+password+"&ut="+userType;
         JSONObject parameters = new JSONObject();
         JsonObjectRequest  jsonRequest = new JsonObjectRequest
                 (Request.Method.POST, urlLogin, parameters, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d(TAG, "onResponse: "+response.toString());
                         try {
-                            Toast.makeText(getApplicationContext(), ""+response.toString(), Toast.LENGTH_LONG).show();
                             SplashActivity.session.setSession("true");
                             SplashActivity.session.setCellNumber(cellNumber);
                             SplashActivity.session.setPassword(password);
@@ -152,6 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         } catch (Exception e) {
                             Log.d(TAG, "Exception: "+e.toString());
+                            Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                         }
                     }
@@ -159,6 +185,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d(TAG, "onErrorResponse: "+error.toString());
+                        Toast.makeText(getApplicationContext(), "User Not Found", Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
                 });

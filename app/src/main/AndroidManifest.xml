@@ -41,6 +41,19 @@
             android:name=".common.activity.LoginActivity"
             android:exported="true">
         </activity>
+
+
+        <service
+            android:name=".common.firebase.FirebaseMsgService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service android:name=".serviceProvider.service.BackgroundLocationUpdateService"
+            android:exported="false"
+            android:enabled="true"></service>
     </application>
 
 </manifest>
