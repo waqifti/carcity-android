@@ -1,44 +1,37 @@
 package carcity.app.serviceProvider.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.badge.BadgeUtils;
-
-import java.util.Locale;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import carcity.app.R;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.common.utils.CommonMethods;
-import carcity.app.serviceProvider.service.BackgroundLocationUpdateService;
-import carcity.app.serviceProvider.service.LocationConstants;
+import carcity.app.serviceProvider.service.MyLocationBroadcast;
+import carcity.app.serviceProvider.service.MyLocationService;
 
-public class ServiceProviderHome extends AppCompatActivity implements LocationListener {
+public class ServiceProviderHome extends AppCompatActivity {
 
     Activity activity;
     public static Context context;
@@ -47,8 +40,13 @@ public class ServiceProviderHome extends AppCompatActivity implements LocationLi
     ImageView ivNavMenu;
     TextView textViewDrawerUserName, textViewDrawerHome, textViewDrawerLogout, textViewLong, textViewLat;
     private static final String TAG = "myLocation";
-    LocationManager locationManager;
-    int counter=0;
+
+    static ServiceProviderHome instance;
+
+
+    public static ServiceProviderHome getInstance() {
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +57,8 @@ public class ServiceProviderHome extends AppCompatActivity implements LocationLi
         CommonMethods.hideSystemUI(activity);
         setViews();
         setListeners();
+//        updateLocation();
+        startService(new Intent(this, MyLocationService.class));
     }
 
     private void setViews() {
@@ -73,73 +73,8 @@ public class ServiceProviderHome extends AppCompatActivity implements LocationLi
         textViewLat = findViewById(R.id.textViewLat);
 
         textViewDrawerUserName.setText(SplashActivity.session.getCellNumber());
-
-        if(ContextCompat.checkSelfPermission(
-                getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    ServiceProviderHome.this,
-                    new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
-                    1
-            );
-        } else {
-            startLocationService();
-        }
-
-//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(ServiceProviderHome.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
-        }
-//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == 1 && grantResults.length > 0){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                startLocationService();
-            } else {
-                Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private boolean isLocationServiceRunning(){
-        ActivityManager activityManager =
-                (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        if(activityManager != null){
-            for(ActivityManager.RunningServiceInfo service :
-                    activityManager.getRunningServices(Integer.MAX_VALUE)){
-                if(LocationServices.class.getName().equals(service.service.getClassName())){
-                    if(service.foreground){
-                        return  true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private void startLocationService(){
-        if(!isLocationServiceRunning()){
-            Intent intent = new Intent(getApplicationContext(), BackgroundLocationUpdateService.class);
-            intent.setAction(LocationConstants.ACTION_START_LOCATION_SERVICE);
-            startService(intent);
-            Toast.makeText(this, "Location Service Started", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void stopLocationService(){
-        if(isLocationServiceRunning()){
-            Intent intent = new Intent(getApplicationContext(), BackgroundLocationUpdateService.class);
-            intent.setAction(LocationConstants.ACTION_STOP_LOCATION_SERVICE);
-            stopService(intent);
-            Toast.makeText(this, "Location Service Stopped", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @SuppressLint("MissingPermission")
     private void setListeners() {
         textViewDrawerHome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,7 +95,6 @@ public class ServiceProviderHome extends AppCompatActivity implements LocationLi
                 toggleLeftDrawer();
             }
         });
-
     }
 
     public void toggleLeftDrawer() {
@@ -171,24 +105,63 @@ public class ServiceProviderHome extends AppCompatActivity implements LocationLi
         }
     }
 
+    private void askPermission() {
+        Dexter.withActivity(activity)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+//                        updateLocation();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+
+                    }
+                });
+    }
+
+    private void updateLocation() {
+        buildLocationRequest();
+
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return;
+//        }
+//        fusedLocationProviderClient.requestLocationUpdates(locationRequest, getPendingIntent());
+    }
+
+    private PendingIntent getPendingIntent() {
+        Intent intent = new Intent(this, MyLocationBroadcast.class);
+        intent.setAction(MyLocationBroadcast.ACTION_PROCESS_UPDATE);
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+    private void buildLocationRequest() {
+//        locationRequest = new LocationRequest();
+//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        locationRequest.setInterval(2000);
+//        locationRequest.setFastestInterval(0);
+
+    }
+
+    public void updateTextView(double longitude, double latitude){
+        ServiceProviderHome.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textViewLong.setText(""+longitude);
+                textViewLat.setText(""+latitude);
+            }
+        });
+    }
+
     @Override
     public void onBackPressed() {
         finishAffinity();
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        counter++;
-//        Log.d(TAG, "Counter: "+counter);
-//        Log.d(TAG, "Long: "+location.getLongitude());
-//        Log.d(TAG, "Lat: "+location.getLatitude());
-        textViewLong.setText("Longitude: "+location.getLongitude());
-        textViewLat.setText("Latitude: "+location.getLatitude());
-
-    }
-
-    @Override
-    public void onProviderEnabled(@NonNull String provider) {
-        Log.d(TAG, "onProviderEnabled provider: "+provider);
     }
 }
