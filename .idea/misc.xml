@@ -6,18 +6,27 @@
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1578125" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/bg_btn.xml" value="0.16979166666666667" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/bg_btn_date.xml" value="0.11203703703703703" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/bg_edittext.xml" value="0.16979166666666667" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/bg_spinner_service_providers.xml" value="0.140625" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/faded_background.xml" value="0.14629629629629629" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/ic_arrow_back_white_24.xml" value="0.178125" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/ic_home_white_24.xml" value="0.1328125" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1578125" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/ic_logout_white_24.xml" value="0.15989583333333332" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/ic_profile_picture.xml" value="0.15" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/ic_service_24.xml" value="0.178125" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/drawable/spinner_item.xml" value="0.1265625" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_admin_home.xml" value="0.15364583333333334" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_all_service_providers.xml" value="0.16197916666666667" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_customer_home.xml" value="0.22" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_main.xml" value="0.14" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_service_provider_home.xml" value="0.1" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_splash.xml" value="0.1" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/content_main_admin.xml" value="0.16197916666666667" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/content_main_service_provider.xml" value="0.16" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/date_picker.xml" value="0.25" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/left_drawer_menu_admin.xml" value="0.14" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/left_drawer_menu_service_provider.xml" value="0.25" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/notification_layout.xml" value="0.12604166666666666" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/spinner_item.xml" value="0.11041666666666666" />

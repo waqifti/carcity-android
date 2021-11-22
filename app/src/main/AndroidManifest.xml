@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="carcity.app" >
+    package="carcity.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -19,20 +19,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CarCity"
-        android:usesCleartextTraffic="true" >
-        <service
-            android:name=".serviceProvider.service.MyLocationService"
-            android:foregroundServiceType="location">
-        </service>
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".admin.activity.AllServiceProvidersActivity"
+            android:exported="false" />
 
-        <receiver android:name=".serviceProvider.service.MyLocationBroadcast" />
+        <service
+            android:name=".serviceProvider.service.LocationUpdatesService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location" />
+
+        <receiver
+            android:name=".serviceProvider.service.BootCompleteReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".admin.activity.AdminHome"
             android:exported="false" />
         <activity
             android:name=".common.activity.SplashActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,12 +60,11 @@
             android:exported="false" />
         <activity
             android:name=".common.activity.LoginActivity"
-            android:exported="true" >
-        </activity>
+            android:exported="true"></activity>
 
         <service
             android:name=".common.firebase.FirebaseMsgService"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

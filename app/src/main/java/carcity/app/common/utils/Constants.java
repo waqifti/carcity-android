@@ -10,8 +10,14 @@ public class Constants {
     //Common values
     public static final String UserTypeCustomer = "Customer";
     public static final String UserTypeServiceProvider = "ServiceProvider";
-    public static final String UserTypeAdmin = "Admin";
+    public static final String UserTypeAdmin = "AdminPortal";
 
-    //Common URLS
+    //Common URLs
     public static String URL_LOGIN = BASE_URL+"/Login";
+
+    //Service Provider URLs
+    public static String URL_Update_Location = BASE_URL+"/Authenticated/ServiceProvider/UpdateLocation";
+
+    //Admin URLs
+    public static String URL_ALL_SERVICE_PROVIDERS = BASE_URL+"/Authenticated/AdminPortal/GetAllServiceProviders";
 }

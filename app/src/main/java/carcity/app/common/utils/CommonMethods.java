@@ -23,6 +23,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import carcity.app.R;
 import carcity.app.common.activity.LoginActivity;
 import carcity.app.common.activity.SplashActivity;
+import carcity.app.serviceProvider.service.LocationUpdatesService;
 
 public class CommonMethods {
 
@@ -31,7 +32,9 @@ public class CommonMethods {
         SplashActivity.session.setCellNumber("");
         SplashActivity.session.setPassword("");
         SplashActivity.session.setUserType("");
-        Toast.makeText(activity, "Logged Out", Toast.LENGTH_SHORT).show();
+        SplashActivity.session.setSessionToken("");
+        Toast.makeText(activity, "Car City Session Logged Out", Toast.LENGTH_SHORT).show();
+        activity.stopService(new Intent(activity, LocationUpdatesService.class));
         activity.startActivity(new Intent(activity, LoginActivity.class));
     }
 
