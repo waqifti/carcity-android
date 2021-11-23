@@ -1,13 +1,20 @@
 package carcity.app.admin.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +25,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -27,13 +35,27 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,21 +65,26 @@ import carcity.app.common.utils.CommonMethods;
 import carcity.app.common.utils.Constants;
 import carcity.app.serviceProvider.activity.ServiceProviderHome;
 
-public class AllServiceProvidersActivity extends AppCompatActivity {
+public class AllServiceProvidersActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private final String TAG = "my_tag";
     Context context;
     Activity activity;
-    ImageView imageViewAllServiceProvidersGoBack;
+    ImageView imageViewAllServiceProvidersGoBack, imageViewRefresh;
     Spinner spinnerAllServiceProviders;
-    Button buttonDateStart, buttonDateEnd;
-    MapView mapView;
+    TextView  textViewDateStart, textViewDateEnd;
     KProgressHUD progressDialog = null;
     int statusCode=0;
-
     ArrayList<String> cellNumbers;
     ArrayAdapter arrayAdapter;
-    private DatePicker datePicker;
+
+    public static GoogleMap map;
+    public static MapView mapViewIncidents;
+    private static final int REQUEST_CODE = 101;
+    private static String API_KEY = "";
+    private ArrayList<Marker> mMarkerArray = new ArrayList<Marker>();
+
+    String cellNumber="", timeStart = "", timeEnd = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +95,16 @@ public class AllServiceProvidersActivity extends AppCompatActivity {
         setViews();
         setListeners();
         getAllServiceProviders();
+        locationPermission();
     }
 
     private void setViews() {
+        context = getApplicationContext();
         imageViewAllServiceProvidersGoBack = findViewById(R.id.imageViewAllServiceProvidersGoBack);
+        imageViewRefresh = findViewById(R.id.imageViewRefresh);
         spinnerAllServiceProviders = findViewById(R.id.spinnerAllServiceProviders);
-        buttonDateStart = findViewById(R.id.buttonDateStart);
-        buttonDateEnd    = findViewById(R.id.buttonDateEnd);
+        textViewDateStart = findViewById(R.id.textViewDateStart);
+        textViewDateEnd    = findViewById(R.id.textViewDateEnd);
 
          cellNumbers = new ArrayList<>();
          cellNumbers.add("Select Service Provider");
@@ -82,9 +112,60 @@ public class AllServiceProvidersActivity extends AppCompatActivity {
 
     private void setListeners() {
         imageViewAllServiceProvidersGoBack.setOnClickListener(onClickListener);
-        buttonDateStart.setOnClickListener(onClickListener);
-        buttonDateEnd.setOnClickListener(onClickListener);
+        imageViewRefresh.setOnClickListener(onClickListener);
+        textViewDateStart.setOnClickListener(onClickListener);
+        textViewDateEnd.setOnClickListener(onClickListener);
         spinnerAllServiceProviders.setOnItemSelectedListener(onItemSelectedListener);
+    }
+
+    public void locationPermission(){
+        if (ContextCompat.checkSelfPermission(AllServiceProvidersActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(AllServiceProvidersActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        1);
+        } else {
+            map();
+        }
+    }
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 1
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            map();
+        }
+    }
+
+    private void map() {
+        MapsInitializer.initialize(context);
+        mapViewIncidents = (MapView) findViewById(R.id.mapAllServiceProviders);
+        if(mapViewIncidents != null){
+            mapViewIncidents.onCreate(null);
+            mapViewIncidents.onResume();
+            mapViewIncidents.getMapAsync(this);
+        }
+
+        API_KEY = getResources().getString(R.string.google_map_api);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap){
+        MapsInitializer.initialize(this);
+
+        map = googleMap;
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, REQUEST_CODE);
+        }
+        else{
+//            map.setMyLocationEnabled(true);
+        }
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -93,11 +174,14 @@ public class AllServiceProvidersActivity extends AppCompatActivity {
             if(view == imageViewAllServiceProvidersGoBack){
                 finish();
             }
-            if(view == buttonDateStart){
-                selectDateStart();
+            if(view == textViewDateStart){
+                selectDateTime(1);
             }
-            if(view == buttonDateEnd){
-                selectDateEnd();
+            if(view == textViewDateEnd){
+                selectDateTime(2);
+            }
+            if(view == imageViewRefresh){
+                getServiceProviderLocationData();
             }
         }
     };
@@ -106,10 +190,12 @@ public class AllServiceProvidersActivity extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+            ((TextView) parent.getChildAt(0)).setTextSize(17);
             if(position == 0){
-                //userType = "";
+                cellNumber = "";
             } else {
-                //userType = userTypes[position];
+                cellNumber = cellNumbers.get(position);
+                getServiceProviderLocationData();
             }
         }
 
@@ -122,7 +208,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity {
     private void getAllServiceProviders(){
         progressDialog = KProgressHUD.create(activity)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Verifying User")
+                .setLabel("Getting Service Providers")
                 .setCancellable(true)
                 .setAnimationSpeed(1)
                 .setDimAmount(0.5f)
@@ -189,11 +275,158 @@ public class AllServiceProvidersActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(jsonRequest);
     }
 
-    private void selectDateStart() {
+    private void selectDateTime(int pos) {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
+                TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        calendar.set(Calendar.MINUTE, month);
+
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss a");
+                        if(pos == 1){
+                            timeStart = simpleDateFormat.format(calendar.getTime());
+                            textViewDateStart.setText(timeStart);
+                            getServiceProviderLocationData();
+                        } else if(pos == 2){
+                            timeEnd = simpleDateFormat.format(calendar.getTime());
+                            textViewDateEnd.setText(timeEnd);
+                            getServiceProviderLocationData();
+                        }
+
+                    }
+                };
+
+                new TimePickerDialog(activity, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
+            }
+        };
+
+        new DatePickerDialog(AllServiceProvidersActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    private void selectDateEnd() {
+    private void getServiceProviderLocationData(){
+        if(cellNumber.equals("")){
+            Toast.makeText(context, "Select Service Provider", Toast.LENGTH_SHORT).show();
+        } else if(timeStart.equals("")){
+            Toast.makeText(context, "Select Start Date", Toast.LENGTH_SHORT).show();
+        } else if(timeEnd.equals("")){
+            Toast.makeText(context, "Select End Date", Toast.LENGTH_SHORT).show();
+        } else {
+            progressDialog = KProgressHUD.create(activity)
+                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                    .setLabel("Fetching Locations")
+                    .setCancellable(true)
+                    .setAnimationSpeed(1)
+                    .setDimAmount(0.5f)
+                    .show();
 
+            String url = Constants.URL_SERVICE_PROVIDERS_RECORDED_LOCATIONS+"?cell="+cellNumber+"&endtime="+timeEnd+"&starttime="+timeStart;
+            JsonArrayRequest jsonRequest = new JsonArrayRequest
+                    (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            try {
+                                progressDialog.dismiss();
+                                double longi = 0.0;
+                                double lati = 0.0;
+                                String recordedat = "";
+                                String dbentryat = "";
+                                LatLng latLng;
+                                String title = "";
+                                Log.d(TAG, "onResponse: "+response.toString());
+                                map.clear();
+                                mMarkerArray.clear();
+                                if(response.length()==0){
+                                    Toast.makeText(getApplicationContext(), "No Record Found", Toast.LENGTH_LONG).show();
+                                } else {
+                                    for(int i=0; i<response.length(); i++){
+                                        JSONObject jsonObject = response.getJSONObject(i);
+                                        longi = Double.parseDouble(jsonObject.getString("longi"));
+                                        lati = Double.parseDouble(jsonObject.getString("lati"));
+                                        recordedat = jsonObject.getString("recordedat");
+                                        dbentryat = jsonObject.getString("dbentryat");
+                                        latLng = new LatLng(lati, longi);
+                                        title = "Recorder at: "+recordedat;
+
+                                        Marker marker = map.addMarker(new MarkerOptions().position(latLng)
+                                                .title(title));
+                                        mMarkerArray.add(marker);
+                                        moveCamera();
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Log.d(TAG, "Exception: "+e.toString());
+                                Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            int code = error.networkResponse.statusCode;
+                            if(code==420 || code==401 || code==403 || code==404){
+                                CommonMethods.logoutUser(ServiceProviderHome.activity);
+                            }
+                            Log.d(TAG, "onErrorResponse: "+error.toString());
+                            Toast.makeText(getApplicationContext(), "User Not Found", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        }
+                    }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  params = new HashMap<String, String>();
+                    params.put("sessiontoken", SplashActivity.session.getSessionToken());
+                    params.put("Content-Type", "application/json");
+                    params.put("Accept", "*/*");
+
+                    return params;
+                }
+
+                @Override
+                protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                    if (response != null) {
+                        statusCode = response.statusCode;
+                    }
+                    return super.parseNetworkResponse(response);
+                }
+
+                @Override
+                public String getBodyContentType() {
+                    return "application/json";
+                }
+            };
+
+            Volley.newRequestQueue(this).add(jsonRequest);
+        }
+    }
+
+    private void moveCamera() {
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMarkerArray.get(mMarkerArray.size()-1).getPosition().latitude, mMarkerArray.get(mMarkerArray.size()-1).getPosition().longitude), 14.5f));
+
+//        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        //the include method will calculate the min and max bound.
+//        for(int i=0; i<mMarkerArray.size(); i++) {
+//            builder.include(mMarkerArray.get(i).getPosition());
+//            builder.include(mMarkerArray.get(i).getPosition());
+//            builder.include(mMarkerArray.get(i).getPosition());
+//            builder.include(mMarkerArray.get(i).getPosition());
+//        }
+//        builder.include(mMarkerArray.get(mMarkerArray.size()-1).getPosition());
+//        LatLngBounds bounds = builder.build();
+//
+//        int width = getResources().getDisplayMetrics().widthPixels;
+//        int height = getResources().getDisplayMetrics().heightPixels;
+//        int padding = (int) (width * 0.01); // offset from edges of the map 1% of screen
+//
+//        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+//
+//        map.animateCamera(cu);
     }
 }

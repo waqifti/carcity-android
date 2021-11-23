@@ -68,8 +68,8 @@ public class LocationUpdatesService extends Service implements LocationListener 
     private final IBinder mBinder = new LocalBinder();
     private NotificationManager mNotificationManager;
     private static Location mLocation;
-    private final long UPDATE_INTERVAL = 1000 * 1;
-    private final long FASTEST_INTERVAL = 1000 * 1;
+    private final long UPDATE_INTERVAL = 1000 * 60;
+    private final long FASTEST_INTERVAL = 1000 * 30;
     FusedLocationProviderClient mFusedLocationClient;
     LocationRequest mLocationRequestHighAccuracy;
     int statusCode=0;

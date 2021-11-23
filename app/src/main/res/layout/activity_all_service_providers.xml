@@ -67,23 +67,42 @@
             android:layout_weight="8.5"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.65"
-                android:paddingTop="30dp"
-                android:paddingBottom="10dp">
+                android:orientation="horizontal"
+                android:background="@drawable/bg_spinner_service_providers"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp">
 
-                <Spinner
-                    android:id="@+id/spinnerAllServiceProviders"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_spinner_service_providers"
-                    android:ems="5"
-                    android:paddingLeft="25dp"
-                    android:textColor="@color/black"
-                    tools:ignore="TouchTargetSizeCheck" />
-            </RelativeLayout>
+                    android:layout_weight="0.2">
+
+                    <Spinner
+                        android:id="@+id/spinnerAllServiceProviders"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="25dp"
+                        android:textColor="@color/black"
+                        tools:ignore="TouchTargetSizeCheck" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.8"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/imageViewRefresh"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/ic_refresh_24" />
+                </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layoutDatePickers"
@@ -100,11 +119,13 @@
                     android:layout_weight="0.5"
                     android:paddingRight="2dp">
 
-                    <Button
-                        android:id="@+id/buttonDateStart"
+                    <TextView
+                        android:id="@+id/textViewDateStart"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_btn_date"
+                        android:gravity="center"
+                        android:textColor="@color/white"
                         android:text="Date Start" />
                 </RelativeLayout>
 
@@ -114,11 +135,13 @@
                     android:layout_weight="0.5"
                     android:paddingLeft="2dp">
 
-                    <Button
-                        android:id="@+id/buttonDateEnd"
+                    <TextView
+                        android:id="@+id/textViewDateEnd"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_btn_date"
+                        android:gravity="center"
+                        android:textColor="@color/white"
                         android:text="Date End" />
                 </RelativeLayout>
 
@@ -128,13 +151,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.18"
-                android:paddingBottom="15dp">
+                android:paddingBottom="20dp">
 
                 <com.google.android.gms.maps.MapView
                     android:id="@+id/mapAllServiceProviders"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/faded_background" />
+
 
             </RelativeLayout>
         </LinearLayout>

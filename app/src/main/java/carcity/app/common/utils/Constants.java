@@ -20,4 +20,5 @@ public class Constants {
 
     //Admin URLs
     public static String URL_ALL_SERVICE_PROVIDERS = BASE_URL+"/Authenticated/AdminPortal/GetAllServiceProviders";
+    public static String URL_SERVICE_PROVIDERS_RECORDED_LOCATIONS = BASE_URL+"/Authenticated/AdminPortal/GetUsersRecordedLocations";
 }
