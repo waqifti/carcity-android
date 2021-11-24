@@ -71,7 +71,7 @@
             android:drawableTint="@color/colorBgOrange"
             android:drawablePadding="40dp"
             android:gravity="center_vertical"
-            android:paddingLeft="35dp"
+            android:paddingLeft="30dp"
             android:text="Service Providers"
             android:textColor="@color/colorBgOrange"
             android:textSize="16sp"
@@ -82,65 +82,26 @@
             android:layout_height="1dp"
             android:background="@color/colorBgBlue" />
 
-        <!--        <TextView-->
-        <!--            android:id="@+id/textViewDrawerReportIncident"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="60dp"-->
-        <!--            android:background="?selectableItemBackground"-->
-        <!--            android:clickable="true"-->
-        <!--            android:drawablePadding="20dp"-->
-        <!--            android:gravity="center_vertical"-->
-        <!--            android:paddingLeft="20dp"-->
-        <!--            android:paddingRight="20dp"-->
-        <!--            android:text="Report Incident"-->
-        <!--            android:textColor="@color/colorBgOrange"-->
-        <!--            android:textSize="16sp"-->
-        <!--            android:textStyle="bold" />-->
+        <TextView
+            android:id="@+id/textViewDrawerSettingsAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:drawableLeft="@drawable/ic_settings_24"
+            android:drawablePadding="40dp"
+            android:drawableTint="@color/colorBgOrange"
+            android:gravity="center_vertical"
+            android:paddingLeft="30dp"
+            android:text="Settings"
+            android:textColor="@color/colorBgOrange"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-        <!--        <View-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="1dp"-->
-        <!--            android:background="@color/colorBgBlue" />-->
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/textViewDrawerViewReportedIncidents"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="60dp"-->
-        <!--            android:background="?selectableItemBackground"-->
-        <!--            android:clickable="true"-->
-        <!--            android:drawablePadding="20dp"-->
-        <!--            android:gravity="center_vertical"-->
-        <!--            android:paddingLeft="20dp"-->
-        <!--            android:paddingRight="20dp"-->
-        <!--            android:text="View Reported Incidents"-->
-        <!--            android:textColor="@color/colorBgOrange"-->
-        <!--            android:textSize="16sp"-->
-        <!--            android:textStyle="bold" />-->
-
-        <!--        <View-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="1dp"-->
-        <!--            android:background="@color/colorBgBlue" />-->
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/textViewDrawerGetHelpServiceLocation"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="60dp"-->
-        <!--            android:background="?selectableItemBackground"-->
-        <!--            android:clickable="true"-->
-        <!--            android:drawablePadding="20dp"-->
-        <!--            android:gravity="center_vertical"-->
-        <!--            android:paddingLeft="20dp"-->
-        <!--            android:paddingRight="20dp"-->
-        <!--            android:text="Get Help Service location"-->
-        <!--            android:textColor="@color/colorBgOrange"-->
-        <!--            android:textSize="16sp"-->
-        <!--            android:textStyle="bold" />-->
-
-        <!--        <View-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="1dp"-->
-        <!--            android:background="@color/colorBgBlue" />-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorBgBlue" />
 
         <TextView
             android:id="@+id/textViewDrawerLogoutAdmin"

@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import carcity.app.R;
+import carcity.app.admin.activity.AllServiceProvidersActivity;
+import carcity.app.admin.activity.SettingsActivityAdmin;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.common.utils.CommonMethods;
 import carcity.app.serviceProvider.service.LocationUpdatesService;
@@ -25,6 +27,7 @@ public class ServiceProviderHome extends AppCompatActivity {
     ImageView ivNavMenu;
     TextView textViewDrawerUserName;
     TextView textViewDrawerHome;
+    TextView textViewDrawerSettings;
     TextView textViewDrawerLogout;
     static TextView textViewLong;
     static TextView textViewLat;
@@ -55,6 +58,7 @@ public class ServiceProviderHome extends AppCompatActivity {
         ivNavMenu = findViewById(R.id.ivNavMenu);
         textViewDrawerUserName = findViewById(R.id.textViewDrawerUserName);
         textViewDrawerHome = findViewById(R.id.textViewDrawerHome);
+        textViewDrawerSettings = findViewById(R.id.textViewDrawerSettingsServiceProvider);
         textViewDrawerLogout = findViewById(R.id.textViewDrawerLogout);
         textViewLong = findViewById(R.id.textViewLong);
         textViewLat = findViewById(R.id.textViewLat);
@@ -63,27 +67,29 @@ public class ServiceProviderHome extends AppCompatActivity {
     }
 
     private void setListeners() {
-        textViewDrawerHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
+        ivNavMenu.setOnClickListener(onClickListener);
+        textViewDrawerHome.setOnClickListener(onClickListener);
+        textViewDrawerSettings.setOnClickListener(onClickListener);
+        textViewDrawerLogout.setOnClickListener(onClickListener);
+    }
 
-        textViewDrawerLogout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                CommonMethods.logoutUser(activity);
-            }
-        });
-
-        ivNavMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    View.OnClickListener onClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view){
+            if(view == ivNavMenu){
                 toggleLeftDrawer();
             }
-        });
-    }
+            if(view == textViewDrawerHome){
+                //
+            }
+            if(view == textViewDrawerSettings){
+                startActivity(new Intent(activity, SettingsActivityServiceProvider.class));
+            }
+            if(view == textViewDrawerLogout){
+                CommonMethods.logoutUser(activity);
+            }
+        }
+    };
 
     public void toggleLeftDrawer() {
         if (drawerLayout.isDrawerOpen(leftDrawerMenu)) {

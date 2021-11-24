@@ -26,7 +26,8 @@ public class AdminHome extends AppCompatActivity {
     ImageView ivNavMenu;
     TextView textViewDrawerUserName;
     TextView textViewDrawerHome;
-    TextView textViewAllServiceProviders;
+    TextView textViewDrawerAllServiceProviders;
+    TextView textViewDrawerSettings;
     TextView textViewDrawerLogout;
     private static final String TAG = "myLocation";
 
@@ -54,46 +55,46 @@ public class AdminHome extends AppCompatActivity {
         ivNavMenu = findViewById(R.id.ivNavMenuAdmin);
         textViewDrawerUserName = findViewById(R.id.textViewDrawerUserNameAdmin);
         textViewDrawerHome = findViewById(R.id.textViewDrawerHomeAdmin);
-        textViewAllServiceProviders = findViewById(R.id.textViewDrawerAllServiceProvidersAdmin);
+        textViewDrawerAllServiceProviders = findViewById(R.id.textViewDrawerAllServiceProvidersAdmin);
+        textViewDrawerSettings = findViewById(R.id.textViewDrawerSettingsAdmin);
         textViewDrawerLogout = findViewById(R.id.textViewDrawerLogoutAdmin);
 
         textViewDrawerUserName.setText(SplashActivity.session.getCellNumber());
     }
 
     private void setListeners() {
-        textViewDrawerHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
-        textViewAllServiceProviders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(activity, AllServiceProvidersActivity.class));
-            }
-        });
-
-        textViewDrawerLogout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                CommonMethods.logoutUser(activity);
-            }
-        });
-
-        ivNavMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleLeftDrawer();
-            }
-        });
+        ivNavMenu.setOnClickListener(onClickListener);
+        textViewDrawerHome.setOnClickListener(onClickListener);
+        textViewDrawerAllServiceProviders.setOnClickListener(onClickListener);
+        textViewDrawerSettings.setOnClickListener(onClickListener);
+        textViewDrawerLogout.setOnClickListener(onClickListener);
     }
 
-    public void toggleLeftDrawer() {
-        if (drawerLayout.isDrawerOpen(leftDrawerMenu)) {
+    View.OnClickListener onClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view){
+            if(view == ivNavMenu){
+                toggleLeftDrawer();
+            }
+            if(view == textViewDrawerHome){
+                //
+            }
+            if(view == textViewDrawerAllServiceProviders){
+                startActivity(new Intent(activity, AllServiceProvidersActivity.class));
+            }
+            if(view == textViewDrawerSettings){
+                startActivity(new Intent(activity, SettingsActivityAdmin.class));
+            }
+            if(view == textViewDrawerLogout){
+                CommonMethods.logoutUser(activity);
+            }
+        }
+    };
+
+    public void toggleLeftDrawer(){
+        if (drawerLayout.isDrawerOpen(leftDrawerMenu)){
             drawerLayout.closeDrawer(leftDrawerMenu);
-        } else {
+        } else{
             drawerLayout.openDrawer(leftDrawerMenu);
         }
     }

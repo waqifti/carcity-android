@@ -7,7 +7,7 @@
     android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/navHeader"
+        android:id="@+id/navHeaderCustomer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0.75"
@@ -18,13 +18,13 @@
         android:paddingBottom="20dp">
 
         <ImageView
-            android:id="@+id/ivProfile"
+            android:id="@+id/ivProfileCustomer"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/ic_profile_picture" />
 
         <TextView
-            android:id="@+id/textViewDrawerUserName"
+            android:id="@+id/textViewDrawerUserNameCustomer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -42,7 +42,7 @@
         android:paddingTop="20dp">
 
         <TextView
-            android:id="@+id/textViewDrawerHome"
+            android:id="@+id/textViewDrawerHomeCustomer"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="?selectableItemBackground"
@@ -62,7 +62,7 @@
             android:background="@color/colorBgBlue" />
 
         <TextView
-            android:id="@+id/textViewDrawerSettingsServiceProvider"
+            android:id="@+id/textViewDrawerSettingsCustomer"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="?selectableItemBackground"
@@ -82,8 +82,10 @@
             android:layout_height="1dp"
             android:background="@color/colorBgBlue" />
 
+
+
         <TextView
-            android:id="@+id/textViewDrawerLogout"
+            android:id="@+id/textViewDrawerLogoutCustomer"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="?selectableItemBackground"

@@ -14,11 +14,14 @@ public class Constants {
 
     //Common URLs
     public static String URL_LOGIN = BASE_URL+"/Login";
+    public static String URL_PROFILE_INFO_CUSTOMER = BASE_URL+"/Authenticated/Customer/getProfileInfo";
 
     //Service Provider URLs
     public static String URL_Update_Location = BASE_URL+"/Authenticated/ServiceProvider/UpdateLocation";
+    public static String URL_PROFILE_INFO_SERVICE_PROVIDER = BASE_URL+"/Authenticated/ServiceProvider/getProfileInfo";
 
     //Admin URLs
     public static String URL_ALL_SERVICE_PROVIDERS = BASE_URL+"/Authenticated/AdminPortal/GetAllServiceProviders";
     public static String URL_SERVICE_PROVIDERS_RECORDED_LOCATIONS = BASE_URL+"/Authenticated/AdminPortal/GetUsersRecordedLocations";
+    public static String URL_PROFILE_INFO_ADMIN = BASE_URL+"/Authenticated/AdminPortal/getProfileInfo";
 }
