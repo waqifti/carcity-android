@@ -18,15 +18,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="120dp"
             android:background="@color/white"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.6"
-                android:paddingLeft="10dp">
+                android:paddingLeft="12dp">
 
                 <TextView
                     android:id="@+id/textViewSettingsModalName"
@@ -42,18 +42,9 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="0.99"
-                android:background="@drawable/faded_background_horizontal">
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.4">
+                android:layout_weight="0.49"
+                android:paddingLeft="10dp">
 
                 <EditText
                     android:id="@+id/editTextSettingsModal"
@@ -73,6 +64,21 @@
 
                 </Spinner>
 
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="0.4">
+
+                <Button
+                    android:id="@+id/buttonSettingsModal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/btn_blue"
+                    android:text="UPDATE"
+                    tools:ignore="TouchTargetSizeCheck" />
             </RelativeLayout>
 
         </LinearLayout>

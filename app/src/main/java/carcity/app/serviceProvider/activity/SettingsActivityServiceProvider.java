@@ -104,6 +104,7 @@ public class SettingsActivityServiceProvider extends AppCompatActivity {
                                 selectableValuesJsonArray = jsonObject.getJSONArray("selectablevalues");
                                 selectableValues = new ArrayList<>();
 
+                                selectableValues.add("Select from list");
                                 for (int j = 0; j<selectableValuesJsonArray.length(); j++) {
                                     selectableValues.add(selectableValuesJsonArray.get(j).toString());
                                 }

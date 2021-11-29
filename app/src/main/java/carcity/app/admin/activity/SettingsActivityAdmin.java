@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -45,6 +46,7 @@ public class SettingsActivityAdmin extends AppCompatActivity {
     Activity activity;
     ImageView imageViewSettingsAdminGoBack;
     RecyclerView recyclerViewSettingAdmin;
+    Button buttonUpdateSettingsAdmin;
     KProgressHUD progressDialog = null;
     int statusCode=0;
 
@@ -63,10 +65,12 @@ public class SettingsActivityAdmin extends AppCompatActivity {
         context = getApplicationContext();
         imageViewSettingsAdminGoBack = findViewById(R.id.imageViewSettingsAdminGoBack);
         recyclerViewSettingAdmin = findViewById(R.id.recyclerViewSettingAdmin);
+        buttonUpdateSettingsAdmin = findViewById(R.id.buttonUpdateSettingsAdmin);
     }
 
     private void setListeners() {
         imageViewSettingsAdminGoBack.setOnClickListener(onClickListener);
+        buttonUpdateSettingsAdmin.setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -75,13 +79,16 @@ public class SettingsActivityAdmin extends AppCompatActivity {
             if(view == imageViewSettingsAdminGoBack){
                 finish();
             }
+            if(view == buttonUpdateSettingsAdmin){
+//                updateSettings();
+            }
         }
     };
 
     private void getProfileInfo(){
         progressDialog = KProgressHUD.create(activity)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Getting Service Providers")
+                .setLabel("Getting Settings")
                 .setCancellable(true)
                 .setAnimationSpeed(1)
                 .setDimAmount(0.5f)
@@ -106,6 +113,7 @@ public class SettingsActivityAdmin extends AppCompatActivity {
                                 selectableValuesJsonArray = jsonObject.getJSONArray("selectablevalues");
                                 selectableValues = new ArrayList<>();
 
+                                selectableValues.add("Select from list");
                                 for (int j = 0; j<selectableValuesJsonArray.length(); j++) {
                                     selectableValues.add(selectableValuesJsonArray.get(j).toString());
                                 }

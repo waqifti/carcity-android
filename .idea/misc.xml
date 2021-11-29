@@ -27,7 +27,7 @@
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_customer_home.xml" value="0.22" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_main.xml" value="0.14" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_service_provider_home.xml" value="0.1" />
-        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_settings_admin.xml" value="0.17" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_settings_admin.xml" value="0.13" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_settings_customer.xml" value="0.140625" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_settings_service_provider.xml" value="0.10677083333333333" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/activity_splash.xml" value="0.1" />
@@ -35,6 +35,8 @@
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/content_main_customer.xml" value="0.11770833333333333" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/content_main_service_provider.xml" value="0.16" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/date_picker.xml" value="0.25" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/fragment_customer_home_create_job.xml" value="0.25" />
+        <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/fragment_customer_home_job_details.xml" value="0.1" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/left_drawer_menu_admin.xml" value="0.21" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/left_drawer_menu_customer.xml" value="0.11770833333333333" />
         <entry key="..\:/Users/AL Ghani Computer/Desktop/Car City/carcity-android/app/src/main/res/layout/left_drawer_menu_service_provider.xml" value="0.25" />

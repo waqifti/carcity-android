@@ -2,21 +2,47 @@ package carcity.app.customer.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.kaopiz.kprogresshud.KProgressHUD;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import carcity.app.R;
+import carcity.app.admin.activity.AdminHome;
 import carcity.app.admin.activity.AllServiceProvidersActivity;
 import carcity.app.admin.activity.SettingsActivityAdmin;
+import carcity.app.common.activity.LoginActivity;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.common.utils.CommonMethods;
+import carcity.app.common.utils.Constants;
+import carcity.app.customer.fragments.FragmentCreateJobCustomer;
+import carcity.app.customer.fragments.FragmentJobDetailsCustomer;
 import carcity.app.serviceProvider.activity.ServiceProviderHome;
 
 public class CustomerHome extends AppCompatActivity {
@@ -30,9 +56,11 @@ public class CustomerHome extends AppCompatActivity {
     TextView textViewDrawerHome;
     TextView textViewDrawerSettings;
     TextView textViewDrawerLogout;
-    private static final String TAG = "myLocation";
+    private static final String TAG = "customer_home";
+    KProgressHUD progressDialog = null;
 
     static CustomerHome instance;
+    int statusCode=0;
 
 
     public static CustomerHome getInstance() {
@@ -47,6 +75,7 @@ public class CustomerHome extends AppCompatActivity {
         CommonMethods.hideSystemUI(activity);
         setViews();
         setListeners();
+        getJobDetails();
     }
 
     private void setViews() {
@@ -76,7 +105,7 @@ public class CustomerHome extends AppCompatActivity {
                 toggleLeftDrawer();
             }
             if(view == textViewDrawerHome){
-                //
+                startActivity(new Intent(CustomerHome.this, CustomerHome.class));
             }
             if(view == textViewDrawerSettings){
                 startActivity(new Intent(activity, SettingsActivityCustomer.class));
@@ -98,5 +127,90 @@ public class CustomerHome extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finishAffinity();
+    }
+
+    private void getJobDetails(){
+        progressDialog = KProgressHUD.create(activity)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Getting Job Details")
+                .setCancellable(true)
+                .setAnimationSpeed(1)
+                .setDimAmount(0.5f)
+                .show();
+        JsonObjectRequest jsonRequest = new JsonObjectRequest
+                (Request.Method.POST, Constants.URL_GET_JOB_DETAILS_CUSTOMER, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            progressDialog.dismiss();
+                            Log.d(TAG, "onResponse: "+response.toString());
+                            Bundle bundle = new Bundle();
+                            bundle.putString("data",response.toString());
+                            FragmentJobDetailsCustomer fragmentJobDetailsCustomer = new FragmentJobDetailsCustomer(activity, context);
+                            fragmentJobDetailsCustomer.setArguments(bundle);
+                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            transaction.replace(R.id.fragment_home_customer, fragmentJobDetailsCustomer);
+                            transaction.commit();
+                        } catch (Exception e) {
+                            Log.d(TAG, "Exception: "+e.toString());
+                            Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        int code = error.networkResponse.statusCode;
+                        try {
+                            Log.d(TAG, "onErrorResponse code "+code+": "+error.toString());
+                            if(code==420 || code==401 || code==403 || code==404){
+                                CommonMethods.logoutUser(ServiceProviderHome.activity);
+                            } else if (code==412){
+                                String data = new String(error.networkResponse.data, "UTF-8");
+                                Log.d(TAG, "onErrorResponse data: "+data);
+                                JSONObject jsonObject = new JSONObject(data);
+                                String message = jsonObject.getString("message");
+                                Log.d(TAG, "onErrorResponse message: "+message);
+                                if(message.equals("Job not found (001).")){
+                                    FragmentCreateJobCustomer fragmentCreateJobCustomer = new FragmentCreateJobCustomer(activity, context);
+                                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.fragment_home_customer, fragmentCreateJobCustomer);
+                                    transaction.commit();
+//                                    Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            progressDialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("sessiontoken", SplashActivity.session.getSessionToken());
+                params.put("Content-Type", "application/json");
+                params.put("Accept", "*/*");
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                if (response != null) {
+                    statusCode = response.statusCode;
+                    Log.d(TAG, "parseNetworkResponse: "+response.toString());
+                    Log.d(TAG, "statusCode: "+statusCode);
+                }
+                return super.parseNetworkResponse(response);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+
+        Volley.newRequestQueue(this).add(jsonRequest);
     }
 }
