@@ -164,6 +164,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
             }, REQUEST_CODE);
         }
         else{
+
 //            map.setMyLocationEnabled(true);
         }
     }

@@ -14,14 +14,25 @@
         android:paddingTop="20dp"
         android:paddingBottom="20dp">
 
-        <Spinner
-            android:id="@+id/spinnerJobTypeCustomerHome"
+<!--        <Spinner-->
+<!--            android:id="@+id/spinnerJobTypeCustomerHome"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:paddingLeft="20dp"-->
+<!--            android:background="@drawable/bg_spinner_service_providers"-->
+<!--            android:textColor="@color/black"-->
+<!--            tools:ignore="TouchTargetSizeCheck" />-->
+        <TextView
+            android:id="@+id/textViewJobTypeCustomerHome"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="20dp"
             android:background="@drawable/bg_spinner_service_providers"
-            android:textColor="@color/black"
-            tools:ignore="TouchTargetSizeCheck" />
+            android:drawableEnd="@drawable/ic_arrow_drop_down_24"
+            android:drawablePadding="16dp"
+            android:padding="20dp"
+            android:gravity="center_vertical"
+            android:text="Select Job Type"
+            android:textColor="@color/colorBgOrange"/>
 
     </RelativeLayout>
 

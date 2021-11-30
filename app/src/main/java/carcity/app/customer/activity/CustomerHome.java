@@ -43,6 +43,7 @@ import carcity.app.common.utils.CommonMethods;
 import carcity.app.common.utils.Constants;
 import carcity.app.customer.fragments.FragmentCreateJobCustomer;
 import carcity.app.customer.fragments.FragmentJobDetailsCustomer;
+import carcity.app.customer.fragments.FragmentJobDoneActivityCustomer;
 import carcity.app.serviceProvider.activity.ServiceProviderHome;
 
 public class CustomerHome extends AppCompatActivity {
@@ -146,11 +147,20 @@ public class CustomerHome extends AppCompatActivity {
                             Log.d(TAG, "onResponse: "+response.toString());
                             Bundle bundle = new Bundle();
                             bundle.putString("data",response.toString());
-                            FragmentJobDetailsCustomer fragmentJobDetailsCustomer = new FragmentJobDetailsCustomer(activity, context);
-                            fragmentJobDetailsCustomer.setArguments(bundle);
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.fragment_home_customer, fragmentJobDetailsCustomer);
-                            transaction.commit();
+
+                            if(response.getString("state").equals("NEW_JOB_WANTS_SERVICE_NOW")){
+                                FragmentJobDetailsCustomer fragmentJobDetailsCustomer = new FragmentJobDetailsCustomer(activity, context);
+                                fragmentJobDetailsCustomer.setArguments(bundle);
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_home_customer, fragmentJobDetailsCustomer);
+                                transaction.commit();
+                            } else if(response.getString("state").equals("JOB_ASSIGNED_TO_SP")){
+                                FragmentJobDoneActivityCustomer fragmentJobDoneActivityCustomer = new FragmentJobDoneActivityCustomer(activity, context);
+                                fragmentJobDoneActivityCustomer.setArguments(bundle);
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_home_customer, fragmentJobDoneActivityCustomer);
+                                transaction.commit();
+                            }
                         } catch (Exception e) {
                             Log.d(TAG, "Exception: "+e.toString());
                             Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
