@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +64,6 @@ public class FragmentJobDoneActivityCustomer extends Fragment implements OnMapRe
     View view;
     Activity activity;
     Context context;
-    JSONObject jsonObject;
     JobDetails jobDetails;
     TextView textViewJobDoneActivity;
     ImageView imageViewRefreshJobDoneActivity;
@@ -74,7 +74,8 @@ public class FragmentJobDoneActivityCustomer extends Fragment implements OnMapRe
     public static MapView mapViewIncidents;
     private static final int REQUEST_CODE = 101;
     private static String API_KEY = "";
-    Marker mMarker;
+    Handler handler;
+    private Runnable runnable;
 
     public FragmentJobDoneActivityCustomer(Activity activity, Context context){
         this.activity = activity;
@@ -89,7 +90,15 @@ public class FragmentJobDoneActivityCustomer extends Fragment implements OnMapRe
         imageViewRefreshJobDoneActivity = view.findViewById(R.id.imageViewRefreshJobDoneActivity);
         imageViewRefreshJobDoneActivity.setOnClickListener(onClickListener);
         locationPermission();
-        getJobDetails();
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                getJobDetails();
+                handler.postDelayed(this, Constants.TIME_INTERVAL);
+            }
+        };
+        handler.postDelayed(runnable, Constants.TIME_INTERVAL);
         return view;
     }
 
@@ -144,19 +153,19 @@ public class FragmentJobDoneActivityCustomer extends Fragment implements OnMapRe
     };
 
     private void getJobDetails(){
-        progressDialog = KProgressHUD.create(activity)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Getting Job Details")
-                .setCancellable(true)
-                .setAnimationSpeed(1)
-                .setDimAmount(0.5f)
-                .show();
+//        progressDialog = KProgressHUD.create(activity)
+//                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+//                .setLabel("Getting Job Details")
+//                .setCancellable(true)
+//                .setAnimationSpeed(1)
+//                .setDimAmount(0.5f)
+//                .show();
         JsonObjectRequest jsonRequest = new JsonObjectRequest
                 (Request.Method.POST, Constants.URL_GET_JOB_DETAILS_CUSTOMER, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            progressDialog.dismiss();
+                            //progressDialog.dismiss();
                             Log.d(TAG, "onResponse: "+response.toString());
                             Bundle bundle = new Bundle();
                             bundle.putString("data",response.toString());
@@ -167,7 +176,7 @@ public class FragmentJobDoneActivityCustomer extends Fragment implements OnMapRe
                         } catch (Exception e) {
                             Log.d(TAG, "Exception: "+e.toString());
                             Toast.makeText(context, "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
+                            //progressDialog.dismiss();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -185,6 +194,7 @@ public class FragmentJobDoneActivityCustomer extends Fragment implements OnMapRe
                                 String message = jsonObject.getString("message");
                                 Log.d(TAG, "onErrorResponse message: "+message);
                                 if(message.equals("Job not found (001).")){
+                                    handler.removeCallbacks(runnable);
                                     FragmentCreateJobCustomer fragmentCreateJobCustomer = new FragmentCreateJobCustomer(activity, context);
                                     FragmentTransaction transaction = getFragmentManager().beginTransaction();
                                     transaction.replace(R.id.fragment_home_customer, fragmentCreateJobCustomer);
@@ -192,7 +202,7 @@ public class FragmentJobDoneActivityCustomer extends Fragment implements OnMapRe
 //                                    Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            progressDialog.dismiss();
+                            //progressDialog.dismiss();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

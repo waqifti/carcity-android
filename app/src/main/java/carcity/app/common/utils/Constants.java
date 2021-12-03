@@ -11,6 +11,7 @@ public class Constants {
     public static final String UserTypeCustomer = "Customer";
     public static final String UserTypeServiceProvider = "ServiceProvider";
     public static final String UserTypeAdmin = "AdminPortal";
+    public static final int TIME_INTERVAL = 5000;
 
     //Common URLs
     public static String URL_LOGIN = BASE_URL+"/Login";
