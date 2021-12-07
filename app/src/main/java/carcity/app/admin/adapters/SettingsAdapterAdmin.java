@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -41,6 +42,7 @@ import java.util.Map;
 
 import carcity.app.R;
 import carcity.app.admin.activity.SettingsActivityAdmin;
+import carcity.app.admin.fragments.FragmentSettingsAdmin;
 import carcity.app.admin.modals.SettingsModal;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.common.utils.CommonMethods;
@@ -194,7 +196,11 @@ public class SettingsAdapterAdmin extends RecyclerView.Adapter<SettingsAdapterAd
                                 progressDialog.dismiss();
                                 Log.d(TAG, "onResponse: "+response.toString());
                                 Toast.makeText(context, ""+response.getString("message"), Toast.LENGTH_SHORT).show();
-                                activity.finish();
+                                FragmentSettingsAdmin fragmentSettingsAdmin = new FragmentSettingsAdmin(activity, context);
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_home_admin, fragmentSettingsAdmin);
+                                transaction.commit();
+                                //activity.finish();
                                 //activity.startActivity(new Intent(activity, SettingsActivityAdmin.class));
                             } catch (Exception e) {
                                 Log.d(TAG, "Exception: "+e.toString());
@@ -207,7 +213,7 @@ public class SettingsAdapterAdmin extends RecyclerView.Adapter<SettingsAdapterAd
                         public void onErrorResponse(VolleyError error) {
                             int code = error.networkResponse.statusCode;
                             if(code==420 || code==401 || code==403 || code==404){
-                                CommonMethods.logoutUser(ServiceProviderHome.activity);
+                                CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                             }
                             Log.d(TAG, "onErrorResponse: "+error.toString());
                             Toast.makeText(context, "Error: "+error.toString(), Toast.LENGTH_SHORT).show();

@@ -56,6 +56,7 @@ public class CustomerHome extends AppCompatActivity {
     TextView textViewDrawerUserName;
     TextView textViewDrawerHome;
     TextView textViewDrawerSettings;
+    TextView textViewDrawerCancelAllJobsCustomer;
     TextView textViewDrawerLogout;
     private static final String TAG = "customer_home";
     KProgressHUD progressDialog = null;
@@ -88,6 +89,7 @@ public class CustomerHome extends AppCompatActivity {
         textViewDrawerHome = findViewById(R.id.textViewDrawerHomeCustomer);
         textViewDrawerSettings = findViewById(R.id.textViewDrawerSettingsCustomer);
         textViewDrawerLogout = findViewById(R.id.textViewDrawerLogoutCustomer);
+        textViewDrawerCancelAllJobsCustomer = findViewById(R.id.textViewDrawerCancelAllJobsCustomer);
 
         textViewDrawerUserName.setText(SplashActivity.session.getCellNumber());
     }
@@ -111,8 +113,11 @@ public class CustomerHome extends AppCompatActivity {
             if(view == textViewDrawerSettings){
                 startActivity(new Intent(activity, SettingsActivityCustomer.class));
             }
+            if(view == textViewDrawerCancelAllJobsCustomer){
+                cancelAllJobs();
+            }
             if(view == textViewDrawerLogout){
-                CommonMethods.logoutUser(activity);
+                CommonMethods.logoutUser(activity,context);
             }
         }
     };
@@ -128,6 +133,87 @@ public class CustomerHome extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finishAffinity();
+    }
+
+    private void cancelAllJobs(){
+        progressDialog = KProgressHUD.create(activity)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Cancelling All Jobs")
+                .setCancellable(true)
+                .setAnimationSpeed(1)
+                .setDimAmount(0.5f)
+                .show();
+        JsonObjectRequest jsonRequest = new JsonObjectRequest
+                (Request.Method.POST, Constants.URL_CANCEL_ALL_JOBS_CUSTOMER, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            progressDialog.dismiss();
+                            String message = response.getString("message");
+                            if(message.equals("Done")){
+                                Toast.makeText(context, "All Jobs Cancelled", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            Log.d(TAG, "Exception: "+e.toString());
+                            Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        int code = error.networkResponse.statusCode;
+                        try {
+                            Log.d(TAG, "onErrorResponse code "+code+": "+error.toString());
+                            if(code==420 || code==401 || code==403 || code==404){
+                                CommonMethods.logoutUser(ServiceProviderHome.activity,context);
+                            } else if (code==412){
+                                String data = new String(error.networkResponse.data, "UTF-8");
+                                Log.d(TAG, "onErrorResponse data: "+data);
+                                JSONObject jsonObject = new JSONObject(data);
+                                String message = jsonObject.getString("message");
+                                Log.d(TAG, "onErrorResponse message: "+message);
+                                if(message.equals("Job not found (001).")){
+                                    FragmentCreateJobCustomer fragmentCreateJobCustomer = new FragmentCreateJobCustomer(activity, context);
+                                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.fragment_home_customer, fragmentCreateJobCustomer);
+                                    transaction.commit();
+//                                    Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            progressDialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("sessiontoken", SplashActivity.session.getSessionToken());
+                params.put("Content-Type", "application/json");
+                params.put("Accept", "*/*");
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                if (response != null) {
+                    statusCode = response.statusCode;
+                    Log.d(TAG, "parseNetworkResponse: "+response.toString());
+                    Log.d(TAG, "statusCode: "+statusCode);
+                }
+                return super.parseNetworkResponse(response);
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+
+        Volley.newRequestQueue(context).add(jsonRequest);
     }
 
     private void getJobDetails(){
@@ -174,7 +260,7 @@ public class CustomerHome extends AppCompatActivity {
                         try {
                             Log.d(TAG, "onErrorResponse code "+code+": "+error.toString());
                             if(code==420 || code==401 || code==403 || code==404){
-                                CommonMethods.logoutUser(ServiceProviderHome.activity);
+                                CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                             } else if (code==412){
                                 String data = new String(error.networkResponse.data, "UTF-8");
                                 Log.d(TAG, "onErrorResponse data: "+data);

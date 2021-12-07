@@ -48,10 +48,51 @@
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:drawableLeft="@drawable/ic_home_white_24"
-            android:drawablePadding="40dp"
+            android:drawablePadding="20dp"
             android:gravity="center_vertical"
             android:paddingLeft="30dp"
             android:text="Home"
+            android:textColor="@color/colorBgOrange"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorBgBlue" />
+
+
+        <TextView
+            android:id="@+id/textViewDrawerActivateJobSearch"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="20dp"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/ic_search_activate_24"
+            android:paddingLeft="30dp"
+            android:text="Activate Job Search"
+            android:textColor="@color/colorBgOrange"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorBgBlue" />
+
+        <TextView
+            android:id="@+id/textViewDrawerDeactivateJobSearch"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="20dp"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/ic_search_deactivate_24"
+            android:paddingLeft="30dp"
+            android:text="Deactivate Job Search"
             android:textColor="@color/colorBgOrange"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -68,7 +109,7 @@
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:drawableLeft="@drawable/ic_settings_24"
-            android:drawablePadding="40dp"
+            android:drawablePadding="20dp"
             android:drawableTint="@color/colorBgOrange"
             android:gravity="center_vertical"
             android:paddingLeft="30dp"
@@ -88,7 +129,7 @@
             android:layout_height="60dp"
             android:background="?selectableItemBackground"
             android:clickable="true"
-            android:drawablePadding="40dp"
+            android:drawablePadding="20dp"
             android:gravity="center_vertical"
             android:drawableLeft="@drawable/ic_logout_white_24"
             android:paddingLeft="30dp"

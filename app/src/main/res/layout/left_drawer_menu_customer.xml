@@ -83,6 +83,26 @@
             android:background="@color/colorBgBlue" />
 
 
+        <TextView
+            android:id="@+id/textViewDrawerCancelAllJobsCustomer"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="40dp"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/ic_cancel_24"
+            android:paddingLeft="30dp"
+            android:text="Cancel All Jobs"
+            android:textColor="@color/colorBgOrange"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorBgBlue" />
+
 
         <TextView
             android:id="@+id/textViewDrawerLogoutCustomer"

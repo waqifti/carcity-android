@@ -58,48 +58,17 @@
         android:paddingTop="20dp"
         android:paddingRight="15dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
-            android:orientation="vertical">
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5">
-
-                <TextView
-                    android:id="@+id/textViewLong"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="left|center_vertical"
-                    android:text="Longitude:"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5">
-
-                <TextView
-                    android:id="@+id/textViewLat"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="left|center_vertical"
-                    android:text="Latitude:"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-            </RelativeLayout>
-        </LinearLayout>
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.2">
+            android:layout_weight="0.2"
+            android:paddingTop="10dp"
+            android:paddingBottom="40dp">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_home_sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
     </LinearLayout>

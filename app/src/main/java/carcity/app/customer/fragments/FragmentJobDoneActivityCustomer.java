@@ -186,7 +186,7 @@ public class FragmentJobDoneActivityCustomer extends Fragment implements OnMapRe
                         try {
                             Log.d(TAG, "onErrorResponse code "+code+": "+error.toString());
                             if(code==420 || code==401 || code==403 || code==404){
-                                CommonMethods.logoutUser(ServiceProviderHome.activity);
+                                CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                             } else if (code==412){
                                 String data = new String(error.networkResponse.data, "UTF-8");
                                 Log.d(TAG, "onErrorResponse data: "+data);

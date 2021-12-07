@@ -61,7 +61,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.2">
+            android:layout_weight="0.2"
+            android:paddingTop="10dp"
+            android:paddingBottom="40dp">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_home_admin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
     </LinearLayout>

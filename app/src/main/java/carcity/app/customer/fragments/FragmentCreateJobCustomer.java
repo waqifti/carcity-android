@@ -235,7 +235,7 @@ public class FragmentCreateJobCustomer extends Fragment {
                             String data = new String(error.networkResponse.data, "UTF-8");
                             Log.d(TAG, "onErrorResponse data: "+data);
                             if(code==420 || code==401 || code==403 || code==404){
-                                CommonMethods.logoutUser(activity);
+                                CommonMethods.logoutUser(activity,context);
                             } else if (code==412){
                                 JSONObject jsonObject = new JSONObject(data);
                                 String message = jsonObject.getString("message");
@@ -321,7 +321,7 @@ public class FragmentCreateJobCustomer extends Fragment {
                                 String data = new String(error.networkResponse.data, "UTF-8");
                                 Log.d(TAG, "onErrorResponse data: "+data);
                                 if(code==420 || code==401 || code==403 || code==404){
-                                    CommonMethods.logoutUser(activity);
+                                    CommonMethods.logoutUser(activity,context);
                                 } else if (code==412){
                                     JSONObject jsonObject = new JSONObject(data);
                                     String message = jsonObject.getString("message");
@@ -401,7 +401,7 @@ public class FragmentCreateJobCustomer extends Fragment {
                         try {
                             Log.d(TAG, "onErrorResponse code "+code+": "+error.toString());
                             if(code==420 || code==401 || code==403 || code==404){
-                                CommonMethods.logoutUser(ServiceProviderHome.activity);
+                                CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                             } else if (code==412){
                                 String data = new String(error.networkResponse.data, "UTF-8");
                                 Log.d(TAG, "onErrorResponse data: "+data);

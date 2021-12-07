@@ -1,26 +1,21 @@
-package carcity.app.customer.fragments;
+package carcity.app.serviceProvider.fragments;
 
 import static android.view.View.GONE;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -28,32 +23,31 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
+import com.google.android.gms.maps.MapView;
+import com.kaopiz.kprogresshud.KProgressHUD;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import carcity.app.R;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.common.utils.CommonMethods;
 import carcity.app.common.utils.Constants;
-import carcity.app.common.utils.JobDetails;
 import carcity.app.serviceProvider.activity.ServiceProviderHome;
 
-public class FragmentJobDetailsCustomer extends Fragment {
+public class FragmentHomeSP extends Fragment {
 
-    private final String TAG = "fragment2";
+    private final String TAG = "fragmentHomeSP";
+    View view;
     Activity activity;
     Context context;
     int statusCode=0;
-    TextView textViewJobStatus;
-    ProgressBar progressBarJobStatus;
-    private Handler handler;
-    private Runnable runnable;
+    KProgressHUD progressDialog = null;
 
-    public FragmentJobDetailsCustomer(Activity activity, Context context){
+    TextView textViewCustomerDetailsSPHome;
+    ImageView imageViewRefreshCustomerDetailsSPHome;
+    MapView mapCustomerDetailsSPHome;
+
+    public FragmentHomeSP(Activity activity, Context context){
         this.activity = activity;
         this.context = context;
     }
@@ -61,20 +55,21 @@ public class FragmentJobDetailsCustomer extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_customer_home_job_details, container, false);
-        textViewJobStatus = view.findViewById(R.id.textViewJobDetailsStatus);
-        progressBarJobStatus = view.findViewById(R.id.progressBarJobStatus);
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                getJobDetails();
-                handler.postDelayed(this, Constants.TIME_INTERVAL);
-            }
-        };
-        handler.postDelayed(runnable, Constants.TIME_INTERVAL);
-
+        view = inflater.inflate(R.layout.fragment_sp_home, container, false);
+        setViews();
+        setListeners();
+        getJobDetails();
         return view;
+    }
+
+    private void setViews() {
+        textViewCustomerDetailsSPHome =  view.findViewById(R.id.textViewCustomerDetailsSPHome);
+        imageViewRefreshCustomerDetailsSPHome =  view.findViewById(R.id.imageViewRefreshCustomerDetailsSPHome);
+        mapCustomerDetailsSPHome =  view.findViewById(R.id.mapCustomerDetailsSPHome);
+    }
+
+    private void setListeners() {
+
     }
 
     private void getJobDetails(){
@@ -86,23 +81,14 @@ public class FragmentJobDetailsCustomer extends Fragment {
 //                .setDimAmount(0.5f)
 //                .show();
         JsonObjectRequest jsonRequest = new JsonObjectRequest
-                (Request.Method.POST, Constants.URL_GET_JOB_DETAILS_CUSTOMER, null, new Response.Listener<JSONObject>() {
+                (Request.Method.POST, Constants.URL_GET_JOB_DETAILS_SP, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
                             //progressDialog.dismiss();
                             Log.d(TAG, "onResponse: "+response.toString());
-                            Bundle bundle = new Bundle();
-                            bundle.putString("data",response.toString());
-
-                            if(response.getString("state").equals("NEW_JOB_WANTS_SERVICE_NOW")){
-                                textViewJobStatus.setText("Job Created, Please Wait for job to be assigned");
-                            } else if(response.getString("state").equals("JOB_ASSIGNED_TO_SP")){
-                                handler.removeCallbacks(runnable);
-                                FragmentJobDoneActivityCustomer fragmentJobDoneActivityCustomer = new FragmentJobDoneActivityCustomer(activity, context);
-                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                transaction.replace(R.id.fragment_home_customer, fragmentJobDoneActivityCustomer);
-                                transaction.commit();
+                            if(response.getString("state").equals("JOB_ASSIGNED_TO_SP")){
+                                //setJob(response);
                             }
                         } catch (Exception e) {
                             Log.d(TAG, "Exception: "+e.toString());
@@ -116,20 +102,21 @@ public class FragmentJobDetailsCustomer extends Fragment {
                         int code = error.networkResponse.statusCode;
                         try {
                             Log.d(TAG, "onErrorResponse code "+code+": "+error.toString());
-                            if(code==420 || code==401 || code==403 || code==404){
+                            if(code==401 || code==403 || code==404){
                                 CommonMethods.logoutUser(ServiceProviderHome.activity,context);
-                            } else if (code==412){
+                            } else if (code==420){
                                 String data = new String(error.networkResponse.data, "UTF-8");
                                 Log.d(TAG, "onErrorResponse data: "+data);
                                 JSONObject jsonObject = new JSONObject(data);
                                 String message = jsonObject.getString("message");
                                 Log.d(TAG, "onErrorResponse message: "+message);
-                                if(message.equals("Job not found (001).")){
-                                    FragmentCreateJobCustomer fragmentCreateJobCustomer = new FragmentCreateJobCustomer(activity, context);
-                                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                    transaction.replace(R.id.fragment_home_customer, fragmentCreateJobCustomer);
-                                    transaction.commit();
-//                                    Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
+                                if(message.equals("Job not found.")){
+                                    textViewCustomerDetailsSPHome.setText("No Job Assigned");
+                                    imageViewRefreshCustomerDetailsSPHome.setVisibility(GONE);
+                                    mapCustomerDetailsSPHome.setVisibility(GONE);
+                                    Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
+                                } else if(message.equals("Wrong sessiontoken")){
+                                    CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                                 }
                             }
                             //progressDialog.dismiss();

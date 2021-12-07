@@ -4,6 +4,7 @@ package carcity.app.serviceProvider.service;
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -190,6 +191,7 @@ public class LocationUpdatesService extends Service implements LocationListener 
         initializeLocationObject();
     }
 
+    @SuppressLint("MissingPermission")
     private void getLocation() {
         Log.d(TAG, "getLocation  ----");
         if (ActivityCompat.checkSelfPermission(this,
@@ -206,7 +208,6 @@ public class LocationUpdatesService extends Service implements LocationListener 
             Location location = locationResult.getLocations().get(0);
             Log.d(TAG, "getLocation  lat: " + location.getLatitude());
             Log.d(TAG, "getLocation  long: " + location.getLongitude());
-            ServiceProviderHome.updateTextView(location.getLongitude(), location.getLatitude());
             sendLocationToServer(location.getLongitude(), location.getLatitude());
             locationUpdate(location);
         }
@@ -243,7 +244,7 @@ public class LocationUpdatesService extends Service implements LocationListener 
                         Log.d(TAG_API, "onErrorResponse: "+error.toString());
                         Log.d(TAG_API, "onErrorResponse code: "+code);
                         if(code==420 || code==401 || code==403 || code==404){
-                            CommonMethods.logoutUser(ServiceProviderHome.activity);
+                            CommonMethods.logoutUser(ServiceProviderHome.activity,getApplicationContext());
                         }
                     }
                 }){

@@ -127,7 +127,7 @@ public class SettingsActivityCustomer extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         int code = error.networkResponse.statusCode;
                         if(code==420 || code==401 || code==403 || code==404){
-                            CommonMethods.logoutUser(ServiceProviderHome.activity);
+                            CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                         }
                         Log.d(TAG, "onErrorResponse: "+error.toString());
                         Toast.makeText(getApplicationContext(), "User Not Found", Toast.LENGTH_SHORT).show();

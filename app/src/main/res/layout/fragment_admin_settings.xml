@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/layoutContainerCustomerDetailsAdminHome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.12"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="20dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="8.5"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.08">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewSettingAdmin"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="2dp"
+                android:layout_weight="0.99"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/buttonUpdateSettingsAdmin"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/btn_blue"
+                    android:text="Update Settings" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

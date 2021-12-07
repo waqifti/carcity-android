@@ -1,32 +1,32 @@
-package carcity.app.admin.activity;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+package carcity.app.admin.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -35,19 +35,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.datepicker.MaterialDatePicker;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.json.JSONArray;
@@ -60,19 +55,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import carcity.app.R;
+import carcity.app.admin.activity.AllServiceProvidersActivity;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.common.utils.CommonMethods;
 import carcity.app.common.utils.Constants;
 import carcity.app.serviceProvider.activity.ServiceProviderHome;
 
-public class AllServiceProvidersActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class FragmentServiceProvidersAdmin extends Fragment implements OnMapReadyCallback {
 
-    private final String TAG = "my_tag";
-    Context context;
-    Activity activity;
-    ImageView imageViewAllServiceProvidersGoBack, imageViewRefresh;
+    private static final String TAG = "All_Jobs_Admin";
+    private Activity activity;
+    private Context context;
+    View view;
+
+    ImageView imageViewRefresh;
     Spinner spinnerAllServiceProviders;
-    TextView  textViewDateStart, textViewDateEnd;
+    TextView textViewDateStart, textViewDateEnd;
     KProgressHUD progressDialog = null;
     int statusCode=0;
     ArrayList<String> cellNumbers;
@@ -86,32 +84,33 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
 
     String cellNumber="", timeStart = "", timeEnd = "";
 
+    public FragmentServiceProvidersAdmin(Activity activity, Context context){
+        this.activity = activity;
+        this.context = context;
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_service_providers);
-        activity = this;
-        CommonMethods.hideSystemUI(activity);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_admin_service_providers, container, false);
         setViews();
         setListeners();
         getAllServiceProviders();
         locationPermission();
+        return view;
     }
 
     private void setViews() {
-        context = getApplicationContext();
-        imageViewAllServiceProvidersGoBack = findViewById(R.id.imageViewAllServiceProvidersGoBack);
-        imageViewRefresh = findViewById(R.id.imageViewRefresh);
-        spinnerAllServiceProviders = findViewById(R.id.spinnerAllServiceProviders);
-        textViewDateStart = findViewById(R.id.textViewDateStart);
-        textViewDateEnd    = findViewById(R.id.textViewDateEnd);
+        imageViewRefresh = view.findViewById(R.id.imageViewRefresh);
+        spinnerAllServiceProviders = view.findViewById(R.id.spinnerAllServiceProviders);
+        textViewDateStart = view.findViewById(R.id.textViewDateStart);
+        textViewDateEnd = view.findViewById(R.id.textViewDateEnd);
 
-         cellNumbers = new ArrayList<>();
-         cellNumbers.add("Select Service Provider");
+        cellNumbers = new ArrayList<>();
+        cellNumbers.add("Select Service Provider");
     }
 
     private void setListeners() {
-        imageViewAllServiceProvidersGoBack.setOnClickListener(onClickListener);
         imageViewRefresh.setOnClickListener(onClickListener);
         textViewDateStart.setOnClickListener(onClickListener);
         textViewDateEnd.setOnClickListener(onClickListener);
@@ -119,12 +118,12 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
     }
 
     public void locationPermission(){
-        if (ContextCompat.checkSelfPermission(AllServiceProvidersActivity.this,
+        if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(AllServiceProvidersActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        1);
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
         } else {
             map();
         }
@@ -141,7 +140,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
 
     private void map() {
         MapsInitializer.initialize(context);
-        mapViewIncidents = (MapView) findViewById(R.id.mapAllServiceProviders);
+        mapViewIncidents = (MapView) view.findViewById(R.id.mapAllServiceProviders);
         if(mapViewIncidents != null){
             mapViewIncidents.onCreate(null);
             mapViewIncidents.onResume();
@@ -153,13 +152,13 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
 
     @Override
     public void onMapReady(GoogleMap googleMap){
-        MapsInitializer.initialize(this);
+        MapsInitializer.initialize(context);
 
         map = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{
+        if(ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(activity, new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION
             }, REQUEST_CODE);
         }
@@ -172,9 +171,6 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(view == imageViewAllServiceProvidersGoBack){
-                finish();
-            }
             if(view == textViewDateStart){
                 selectDateTime(1);
             }
@@ -233,7 +229,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
                             spinnerAllServiceProviders.setAdapter(arrayAdapter);
                         } catch (Exception e) {
                             Log.d(TAG, "Exception: "+e.toString());
-                            Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                         }
                     }
@@ -245,7 +241,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
                             CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                         }
                         Log.d(TAG, "onErrorResponse: "+error.toString());
-                        Toast.makeText(getApplicationContext(), "User Not Found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "User Not Found", Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
                 }){
@@ -273,7 +269,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
             }
         };
 
-        Volley.newRequestQueue(this).add(jsonRequest);
+        Volley.newRequestQueue(context).add(jsonRequest);
     }
 
     private void selectDateTime(int pos) {
@@ -309,7 +305,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
             }
         };
 
-        new DatePickerDialog(AllServiceProvidersActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(activity, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private void getServiceProviderLocationData(){
@@ -345,7 +341,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
                                 map.clear();
                                 mMarkerArray.clear();
                                 if(response.length()==0){
-                                    Toast.makeText(getApplicationContext(), "No Record Found", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, "No Record Found", Toast.LENGTH_LONG).show();
                                 } else {
                                     for(int i=0; i<response.length(); i++){
                                         JSONObject jsonObject = response.getJSONObject(i);
@@ -364,7 +360,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
                                 }
                             } catch (Exception e) {
                                 Log.d(TAG, "Exception: "+e.toString());
-                                Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                             }
                         }
@@ -376,7 +372,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
                                 CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                             }
                             Log.d(TAG, "onErrorResponse: "+error.toString());
-                            Toast.makeText(getApplicationContext(), "User Not Found", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "User Not Found", Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                         }
                     }){
@@ -404,7 +400,7 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
                 }
             };
 
-            Volley.newRequestQueue(this).add(jsonRequest);
+            Volley.newRequestQueue(context).add(jsonRequest);
         }
     }
 
@@ -430,4 +426,5 @@ public class AllServiceProvidersActivity extends AppCompatActivity implements On
 //
 //        map.animateCamera(cu);
     }
+
 }

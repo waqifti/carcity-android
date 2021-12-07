@@ -2,6 +2,7 @@ package carcity.app.admin.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,10 +13,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import carcity.app.R;
+import carcity.app.admin.fragments.FragmentAllJobsAdmin;
+import carcity.app.admin.fragments.FragmentHomeAdmin;
+import carcity.app.admin.fragments.FragmentServiceProvidersAdmin;
+import carcity.app.admin.fragments.FragmentSettingsAdmin;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.common.utils.CommonMethods;
 import carcity.app.serviceProvider.activity.ServiceProviderHome;
-import carcity.app.serviceProvider.service.LocationUpdatesService;
 
 public class AdminHome extends AppCompatActivity {
 
@@ -27,6 +31,7 @@ public class AdminHome extends AppCompatActivity {
     TextView textViewDrawerUserName;
     TextView textViewDrawerHome;
     TextView textViewDrawerAllServiceProviders;
+    TextView textViewDrawerAllJobsAdmin;
     TextView textViewDrawerSettings;
     TextView textViewDrawerLogout;
     private static final String TAG = "myLocation";
@@ -56,6 +61,7 @@ public class AdminHome extends AppCompatActivity {
         textViewDrawerUserName = findViewById(R.id.textViewDrawerUserNameAdmin);
         textViewDrawerHome = findViewById(R.id.textViewDrawerHomeAdmin);
         textViewDrawerAllServiceProviders = findViewById(R.id.textViewDrawerAllServiceProvidersAdmin);
+        textViewDrawerAllJobsAdmin = findViewById(R.id.textViewDrawerAllJobsAdmin);
         textViewDrawerSettings = findViewById(R.id.textViewDrawerSettingsAdmin);
         textViewDrawerLogout = findViewById(R.id.textViewDrawerLogoutAdmin);
 
@@ -66,6 +72,7 @@ public class AdminHome extends AppCompatActivity {
         ivNavMenu.setOnClickListener(onClickListener);
         textViewDrawerHome.setOnClickListener(onClickListener);
         textViewDrawerAllServiceProviders.setOnClickListener(onClickListener);
+        textViewDrawerAllJobsAdmin.setOnClickListener(onClickListener);
         textViewDrawerSettings.setOnClickListener(onClickListener);
         textViewDrawerLogout.setOnClickListener(onClickListener);
     }
@@ -77,16 +84,35 @@ public class AdminHome extends AppCompatActivity {
                 toggleLeftDrawer();
             }
             if(view == textViewDrawerHome){
-                //
+                FragmentHomeAdmin fragmentHomeAdmin = new FragmentHomeAdmin(activity, context);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_home_admin, fragmentHomeAdmin);
+                transaction.commit();
+                toggleLeftDrawer();
             }
             if(view == textViewDrawerAllServiceProviders){
-                startActivity(new Intent(activity, AllServiceProvidersActivity.class));
+                FragmentServiceProvidersAdmin fragmentServiceProvidersAdmin = new FragmentServiceProvidersAdmin(activity, context);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_home_admin, fragmentServiceProvidersAdmin);
+                transaction.commit();
+                toggleLeftDrawer();
+            }
+            if(view == textViewDrawerAllJobsAdmin){
+                FragmentAllJobsAdmin fragmentAllJobsAdmin = new FragmentAllJobsAdmin(activity, context);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_home_admin, fragmentAllJobsAdmin);
+                transaction.commit();
+                toggleLeftDrawer();
             }
             if(view == textViewDrawerSettings){
-                startActivity(new Intent(activity, SettingsActivityAdmin.class));
+                FragmentSettingsAdmin fragmentSettingsAdmin = new FragmentSettingsAdmin(activity, context);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_home_admin, fragmentSettingsAdmin);
+                transaction.commit();
+                toggleLeftDrawer();
             }
             if(view == textViewDrawerLogout){
-                CommonMethods.logoutUser(activity);
+                CommonMethods.logoutUser(activity, context);
             }
         }
     };
