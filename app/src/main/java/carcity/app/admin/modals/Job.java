@@ -2,29 +2,33 @@ package carcity.app.admin.modals;
 
 public class Job {
     private String id;
-    private String dbentryat;
-    private String longi;
-    private String lati;
+    private String dbEntryAt;
+    private String longitude;
+    private String latitude;
     private String state;
     private String description;
     private String notes;
-    private String createdby;
-    private String assignedto;
-    private String assignedtodetails;
-    private String managedby;
+    private String createdBy;
+    private String assignedTo;
+    private String assignedToCell;
+    private String assignedToCurrentLongitude;
+    private String assignedToCurrentLatitude;
+    private String managedBy;
 
-    public Job(String id, String dbentryat, String longi, String lati, String state, String description, String notes, String createdby, String assignedto, String assignedtodetails, String managedby) {
+    public Job(String id, String dbEntryAt, String longitude, String latitude, String state, String description, String notes, String createdBy, String assignedTo, String assignedToCell, String assignedToCurrentLongitude, String assignedToCurrentLatitude, String managedBy) {
         this.id = id;
-        this.dbentryat = dbentryat;
-        this.longi = longi;
-        this.lati = lati;
+        this.dbEntryAt = dbEntryAt;
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.state = state;
         this.description = description;
         this.notes = notes;
-        this.createdby = createdby;
-        this.assignedto = assignedto;
-        this.assignedtodetails = assignedtodetails;
-        this.managedby = managedby;
+        this.createdBy = createdBy;
+        this.assignedTo = assignedTo;
+        this.assignedToCell = assignedToCell;
+        this.assignedToCurrentLongitude = assignedToCurrentLongitude;
+        this.assignedToCurrentLatitude = assignedToCurrentLatitude;
+        this.managedBy = managedBy;
     }
 
     public String getId() {
@@ -35,28 +39,28 @@ public class Job {
         this.id = id;
     }
 
-    public String getDbentryat() {
-        return dbentryat;
+    public String getDbEntryAt() {
+        return dbEntryAt;
     }
 
-    public void setDbentryat(String dbentryat) {
-        this.dbentryat = dbentryat;
+    public void setDbEntryAt(String dbEntryAt) {
+        this.dbEntryAt = dbEntryAt;
     }
 
-    public String getLongi() {
-        return longi;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setLongi(String longi) {
-        this.longi = longi;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
-    public String getLati() {
-        return lati;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setLati(String lati) {
-        this.lati = lati;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
     public String getState() {
@@ -83,35 +87,51 @@ public class Job {
         this.notes = notes;
     }
 
-    public String getCreatedby() {
-        return createdby;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreatedby(String createdby) {
-        this.createdby = createdby;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public String getAssignedto() {
-        return assignedto;
+    public String getAssignedTo() {
+        return assignedTo;
     }
 
-    public void setAssignedto(String assignedto) {
-        this.assignedto = assignedto;
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
     }
 
-    public String getAssignedtodetails() {
-        return assignedtodetails;
+    public String getAssignedToCell() {
+        return assignedToCell;
     }
 
-    public void setAssignedtodetails(String assignedtodetails) {
-        this.assignedtodetails = assignedtodetails;
+    public void setAssignedToCell(String assignedToCell) {
+        this.assignedToCell = assignedToCell;
     }
 
-    public String getManagedby() {
-        return managedby;
+    public String getAssignedToCurrentLongitude() {
+        return assignedToCurrentLongitude;
     }
 
-    public void setManagedby(String managedby) {
-        this.managedby = managedby;
+    public void setAssignedToCurrentLongitude(String assignedToCurrentLongitude) {
+        this.assignedToCurrentLongitude = assignedToCurrentLongitude;
+    }
+
+    public String getAssignedToCurrentLatitude() {
+        return assignedToCurrentLatitude;
+    }
+
+    public void setAssignedToCurrentLatitude(String assignedToCurrentLatitude) {
+        this.assignedToCurrentLatitude = assignedToCurrentLatitude;
+    }
+
+    public String getManagedBy() {
+        return managedBy;
+    }
+
+    public void setManagedBy(String managedBy) {
+        this.managedBy = managedBy;
     }
 }

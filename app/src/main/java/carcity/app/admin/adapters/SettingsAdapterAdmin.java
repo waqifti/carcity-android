@@ -196,10 +196,11 @@ public class SettingsAdapterAdmin extends RecyclerView.Adapter<SettingsAdapterAd
                                 progressDialog.dismiss();
                                 Log.d(TAG, "onResponse: "+response.toString());
                                 Toast.makeText(context, ""+response.getString("message"), Toast.LENGTH_SHORT).show();
-                                FragmentSettingsAdmin fragmentSettingsAdmin = new FragmentSettingsAdmin(activity, context);
-                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                                transaction.replace(R.id.fragment_home_admin, fragmentSettingsAdmin);
-                                transaction.commit();
+                                notifyDataSetChanged();
+//                                FragmentSettingsAdmin fragmentSettingsAdmin = new FragmentSettingsAdmin(activity, context);
+//                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                                transaction.replace(R.id.fragment_home_admin, fragmentSettingsAdmin);
+//                                transaction.commit();
                                 //activity.finish();
                                 //activity.startActivity(new Intent(activity, SettingsActivityAdmin.class));
                             } catch (Exception e) {

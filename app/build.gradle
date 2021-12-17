@@ -54,5 +54,10 @@ dependencies {
     implementation 'com.karumi:dexter:6.2.0'
     implementation 'com.kaopiz:kprogresshud:1.1.0'
 
+    //google map
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.libraries.places:places:2.4.0'
     implementation 'com.google.maps.android:android-maps-utils:0.4+'
+    implementation 'com.google.maps:google-maps-services:0.10.1'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
 }

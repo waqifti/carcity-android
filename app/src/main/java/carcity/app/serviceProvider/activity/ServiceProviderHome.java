@@ -80,10 +80,7 @@ public class ServiceProviderHome extends AppCompatActivity {
         setViews();
         setListeners();
         startService(new Intent(activity, LocationUpdatesService.class));
-        FragmentHomeSP fragmentHomeSP = new FragmentHomeSP(activity, context);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_home_sp, fragmentHomeSP);
-        transaction.commit();
+        goHome();
     }
 
     private void setViews() {
@@ -117,7 +114,8 @@ public class ServiceProviderHome extends AppCompatActivity {
                 toggleLeftDrawer();
             }
             if(view == textViewDrawerHome){
-                //
+                goHome();
+                toggleLeftDrawer();
             }
             if(view == textViewDrawerSettings){
                 startActivity(new Intent(activity, SettingsActivityServiceProvider.class));
@@ -133,6 +131,13 @@ public class ServiceProviderHome extends AppCompatActivity {
             }
         }
     };
+
+    private void goHome() {
+        FragmentHomeSP fragmentHomeSP = new FragmentHomeSP(activity, context);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_home_sp, fragmentHomeSP);
+        transaction.commit();
+    }
 
     public void toggleLeftDrawer() {
         if (drawerLayout.isDrawerOpen(leftDrawerMenu)) {
@@ -158,8 +163,10 @@ public class ServiceProviderHome extends AppCompatActivity {
                         try {
                             progressDialog.dismiss();
                             Log.d(TAG, "onResponse: "+response.toString());
-                            if(response.getString("message").equals("Done"))
+                            if(response.getString("message").equals("Done")) {
                                 Toast.makeText(context, "Activated", Toast.LENGTH_SHORT).show();
+                                toggleLeftDrawer();
+                            }
                         } catch (Exception e) {
                             Log.d(TAG, "Exception: "+e.toString());
                             Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -220,8 +227,10 @@ public class ServiceProviderHome extends AppCompatActivity {
                         try {
                             progressDialog.dismiss();
                             Log.d(TAG, "onResponse: "+response.toString());
-                            if(response.getString("message").equals("Done"))
+                            if(response.getString("message").equals("Done")) {
                                 Toast.makeText(context, "Deactivated", Toast.LENGTH_SHORT).show();
+                                toggleLeftDrawer();
+                            }
                         } catch (Exception e) {
                             Log.d(TAG, "Exception: "+e.toString());
                             Toast.makeText(getApplicationContext(), "Exception: "+e.getMessage(), Toast.LENGTH_SHORT).show();

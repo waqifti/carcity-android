@@ -55,7 +55,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import carcity.app.R;
-import carcity.app.admin.activity.AllServiceProvidersActivity;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.common.utils.CommonMethods;
 import carcity.app.common.utils.Constants;
@@ -63,7 +62,7 @@ import carcity.app.serviceProvider.activity.ServiceProviderHome;
 
 public class FragmentServiceProvidersAdmin extends Fragment implements OnMapReadyCallback {
 
-    private static final String TAG = "All_Jobs_Admin";
+    private static final String TAG = "All_SP_Admin";
     private Activity activity;
     private Context context;
     View view;
@@ -73,7 +72,8 @@ public class FragmentServiceProvidersAdmin extends Fragment implements OnMapRead
     TextView textViewDateStart, textViewDateEnd;
     KProgressHUD progressDialog = null;
     int statusCode=0;
-    ArrayList<String> cellNumbers;
+    ArrayList<String> spCellNumbers;
+    ArrayList<String> spNames;
     ArrayAdapter arrayAdapter;
 
     public static GoogleMap map;
@@ -106,8 +106,10 @@ public class FragmentServiceProvidersAdmin extends Fragment implements OnMapRead
         textViewDateStart = view.findViewById(R.id.textViewDateStart);
         textViewDateEnd = view.findViewById(R.id.textViewDateEnd);
 
-        cellNumbers = new ArrayList<>();
-        cellNumbers.add("Select Service Provider");
+        spCellNumbers = new ArrayList<>();
+        spNames = new ArrayList<>();
+        spCellNumbers.add("Select Service Provider");
+        spNames.add("Select Service Provider");
     }
 
     private void setListeners() {
@@ -191,7 +193,7 @@ public class FragmentServiceProvidersAdmin extends Fragment implements OnMapRead
             if(position == 0){
                 cellNumber = "";
             } else {
-                cellNumber = cellNumbers.get(position);
+                cellNumber = spCellNumbers.get(position);
                 getServiceProviderLocationData();
             }
         }
@@ -215,16 +217,21 @@ public class FragmentServiceProvidersAdmin extends Fragment implements OnMapRead
                 (Request.Method.GET, Constants.URL_ALL_SERVICE_PROVIDERS, null, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        String cell;
+                        String cell,name;
                         try {
                             progressDialog.dismiss();
+                            Log.d(TAG, "onResponse: "+response.toString());
                             for(int i=0; i<response.length(); i++){
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 cell = jsonObject.getString("cell");
-                                cellNumbers.add(cell);
-                                Log.d(TAG, "onResponse: cell, "+cell);
+                                name = jsonObject.getString("name");
+                                spCellNumbers.add(cell);
+                                if(!name.equals("null")){
+                                    spNames.add(name);
+                                } else { spNames.add(cell); }
+//                                Log.d(TAG, "onResponse: cell, "+cell);
                             }
-                            arrayAdapter = new ArrayAdapter(activity, R.layout.spinner_item, cellNumbers);
+                            arrayAdapter = new ArrayAdapter(activity, R.layout.spinner_item, spNames);
                             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerAllServiceProviders.setAdapter(arrayAdapter);
                         } catch (Exception e) {
@@ -237,6 +244,7 @@ public class FragmentServiceProvidersAdmin extends Fragment implements OnMapRead
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         int code = error.networkResponse.statusCode;
+                        Log.d(TAG, "onErrorResponse code: "+code);
                         if(code==420 || code==401 || code==403 || code==404){
                             CommonMethods.logoutUser(ServiceProviderHome.activity,context);
                         }

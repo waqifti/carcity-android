@@ -147,6 +147,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser(String cellNumber, String password, String userType) {
+        Log.d("haseeb", "loginUser() called");
         Log.d(TAG, "fcmToken: "+fcmToken);
         String urlLogin = Constants.URL_LOGIN+"?cell="+cellNumber+"&fcmtoken="+fcmToken+"&password="+password+"&ut="+userType;
         JSONObject parameters = new JSONObject();

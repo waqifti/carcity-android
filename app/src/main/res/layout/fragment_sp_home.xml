@@ -55,11 +55,14 @@
                     android:layout_weight="0.8"
                     android:padding="10dp">
 
-                    <ImageView
-                        android:id="@+id/imageViewRefreshCustomerDetailsSPHome"
+                    <TextView
+                        android:id="@+id/textViewCounterSPHome"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:srcCompat="@drawable/ic_refresh_24" />
+                        android:gravity="center"
+                        android:text="5"
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
                 </RelativeLayout>
             </LinearLayout>
 

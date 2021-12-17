@@ -106,6 +106,7 @@ public class LocationUpdatesService extends Service implements LocationListener 
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        Log.d("haseeb", "onLocationChanged() called");
         String msg = location + "Changed Location";
         Log.d(TAG, msg);
         Toast.makeText(ServiceProviderHome.context, msg, Toast.LENGTH_SHORT).show();
@@ -205,6 +206,7 @@ public class LocationUpdatesService extends Service implements LocationListener 
     LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
+            Log.d("haseeb", "onLocationResult() called");
             Location location = locationResult.getLocations().get(0);
             Log.d(TAG, "getLocation  lat: " + location.getLatitude());
             Log.d(TAG, "getLocation  long: " + location.getLongitude());
@@ -214,6 +216,7 @@ public class LocationUpdatesService extends Service implements LocationListener 
     };
 
     private void sendLocationToServer(double longitude, double latitude){
+        Log.d("haseeb", "sendLocationToServer");
         String APP_STATE="";
         if(foregrounded()){ APP_STATE = "FOREGROUND"; }
         else { APP_STATE = "BACKGROUND"; }
@@ -296,6 +299,7 @@ public class LocationUpdatesService extends Service implements LocationListener 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+        super.onDestroy();
     }
 
     private Notification getNotification() {

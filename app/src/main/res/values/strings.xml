@@ -3,5 +3,6 @@
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="default_notification_channel_name">Weather</string>
 
-    <string name="google_map_api">AIzaSyDPGfP-zhfXrl-OE2Nz4Q1ep9buaaEc-w8</string>
+<!--    <string name="google_map_api">AIzaSyDPGfP-zhfXrl-OE2Nz4Q1ep9buaaEc-w8</string>-->
+    <string name="google_map_api">AIzaSyCaS6mfcsGApLEEY13N0VYkIuQXZWyYp0c</string>
 </resources>

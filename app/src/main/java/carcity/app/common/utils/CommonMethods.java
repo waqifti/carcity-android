@@ -1,5 +1,6 @@
 package carcity.app.common.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -37,11 +39,13 @@ import carcity.app.R;
 import carcity.app.common.activity.LoginActivity;
 import carcity.app.common.activity.SplashActivity;
 import carcity.app.serviceProvider.activity.ServiceProviderHome;
+import carcity.app.serviceProvider.fragments.FragmentHomeSP;
 import carcity.app.serviceProvider.service.LocationUpdatesService;
 
 public class CommonMethods {
 
     public static void logoutUser(Activity activity, Context context){
+        Log.d("haseeb", "logoutUser() called");
         KProgressHUD progressDialog = KProgressHUD.create(activity)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setLabel("Logging Out")
@@ -51,6 +55,7 @@ public class CommonMethods {
                 .show();
         JsonObjectRequest jsonRequest = new JsonObjectRequest
                 (Request.Method.POST, Constants.URL_LOGOUT, null, new Response.Listener<JSONObject>() {
+                    @SuppressLint("MissingPermission")
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -62,6 +67,10 @@ public class CommonMethods {
                                 SplashActivity.session.setUserType("");
                                 SplashActivity.session.setSessionToken("");
                                 Toast.makeText(activity, "Car City Session Logged Out", Toast.LENGTH_SHORT).show();
+                                if(FragmentHomeSP.locationManager != null)
+                                    FragmentHomeSP.locationManager.removeUpdates(FragmentHomeSP.locationListener);
+                                if(FragmentHomeSP.handler != null)
+                                    FragmentHomeSP.handler.removeCallbacks(FragmentHomeSP.runnable);
                                 activity.stopService(new Intent(activity, LocationUpdatesService.class));
                                 activity.startActivity(new Intent(activity, LoginActivity.class));
                             }
@@ -111,10 +120,10 @@ public class CommonMethods {
         return fcmToken[0];
     }
 
-    public static boolean isNetworkConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
-    }
+//    public static boolean isNetworkConnected(Context context) {
+//        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//        return cm.getActiveNetworkInfo() != null;
+//    }
 
     public static void hideSystemUI(Activity activity) {
         Window window = activity.getWindow();
